@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.legacy.subsystems.settings;
+package org.firstinspires.ftc.teamcode.legacy.subsystems.Drive;
 
 public enum DriveMode {
     Sport(1),

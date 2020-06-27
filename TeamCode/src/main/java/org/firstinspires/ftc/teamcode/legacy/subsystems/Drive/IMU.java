@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.legacy.subsystems;
+package org.firstinspires.ftc.teamcode.legacy.subsystems.Drive;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
@@ -12,6 +12,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 import org.firstinspires.ftc.teamcode.legacy.states.StateMachine;
+import org.firstinspires.ftc.teamcode.legacy.subsystems.Subsystem;
 
 public class IMU extends Subsystem {
     private BNO055IMU imu;

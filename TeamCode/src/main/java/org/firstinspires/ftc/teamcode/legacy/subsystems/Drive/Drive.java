@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.legacy.subsystems;
+package org.firstinspires.ftc.teamcode.legacy.subsystems.Drive;
 
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -6,7 +6,8 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.teamcode.legacy.lib.motion.TrapezoidalMotionProfile;
 import org.firstinspires.ftc.teamcode.legacy.src.Constants;
 import org.firstinspires.ftc.teamcode.legacy.states.StateMachine;
-import org.firstinspires.ftc.teamcode.legacy.subsystems.settings.DriveMode;
+import org.firstinspires.ftc.teamcode.legacy.subsystems.Subsystem;
+import org.firstinspires.ftc.teamcode.legacy.subsystems.Vision.Vision;
 
 import java.util.Arrays;
 
@@ -14,9 +15,11 @@ public class Drive extends Subsystem {
     private DcMotorEx frontLeft, frontRight, backLeft, backRight;
     private DcMotorEx[] driveMotors;
     private IMU imu;
+    private Vision vision;
 
-    public Drive(IMU adaIMU) {
-        setImu(adaIMU);
+    public Drive(IMU imu, Vision vision) {
+        setImu(imu);
+        setVision(vision);
     }
 
     @Override
@@ -222,7 +225,29 @@ public class Drive extends Subsystem {
         frontRight.setPower(v4);
     }
 
+    /**
+     * Field-Centric Mecanum Drive Control
+     * @param y Forward/Backward Force (GamePad Left Stick y)
+     * @param x Left/Right (Strafe) Force (GamePad Left Stick x)
+     * @param turn Rotational Force (GamePad Right Stick x)
+     * @param mode Drivetrain Speed Setting (Sport, Normal, Economy)
+     */
+    public void fieldCentricMecanumDrive(double y, double x, double turn, DriveMode mode) {
+        x = x * Math.cos(imu.getHeading()) - y * Math.sin(imu.getHeading());
+        y = x * Math.sin(imu.getHeading()) + y * Math.cos(imu.getHeading());
+
+        mecanumDrive(y, x, turn, mode);
+    }
+
     public void setImu(IMU imu) {
         this.imu = imu;
+    }
+
+    public Vision getVision() {
+        return vision;
+    }
+
+    public void setVision(Vision vision) {
+        this.vision = vision;
     }
 }

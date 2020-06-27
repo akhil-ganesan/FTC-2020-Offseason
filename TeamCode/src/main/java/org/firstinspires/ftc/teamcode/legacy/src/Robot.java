@@ -4,9 +4,10 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.legacy.subsystems.Drive;
-import org.firstinspires.ftc.teamcode.legacy.subsystems.IMU;
+import org.firstinspires.ftc.teamcode.legacy.subsystems.Drive.Drive;
+import org.firstinspires.ftc.teamcode.legacy.subsystems.Drive.IMU;
 import org.firstinspires.ftc.teamcode.legacy.subsystems.Subsystem;
+import org.firstinspires.ftc.teamcode.legacy.subsystems.Vision.Vuforia;
 
 public class Robot {
     private Telemetry telemetry;
@@ -17,7 +18,8 @@ public class Robot {
     private Subsystem[] subsystems;
 
     private IMU imu = new IMU();
-    private Drive DriveSubsystem = new Drive(imu);
+    private Vuforia vuforia = new Vuforia();
+    private Drive DriveSubsystem = new Drive(imu, vuforia);
 
     public Robot(HardwareMap hMap, Telemetry tele) {
         hardwareMap = hMap;

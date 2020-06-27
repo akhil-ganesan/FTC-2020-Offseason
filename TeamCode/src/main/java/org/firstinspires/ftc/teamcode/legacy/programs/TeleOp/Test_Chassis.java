@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.legacy.src.GameState;
 import org.firstinspires.ftc.teamcode.legacy.src.Robot;
-import org.firstinspires.ftc.teamcode.legacy.subsystems.settings.DriveMode;
+import org.firstinspires.ftc.teamcode.legacy.subsystems.Drive.DriveMode;
 
 @TeleOp(name = "Test Chassis", group = "Test")
 public class Test_Chassis extends OpMode {
@@ -21,10 +21,10 @@ public class Test_Chassis extends OpMode {
         robot.resetElapsedTime();
 
         if (robot.getGameState() == GameState.TeleOp) {
-            robot.getDriveSubsystem().mecanumDrive(gamepad1.left_stick_y, gamepad1.left_stick_x,
+            robot.getDriveSubsystem().fieldCentricMecanumDrive(gamepad1.left_stick_y, gamepad1.left_stick_x,
                     gamepad1.right_stick_x, DriveMode.Normal);
         } else {
-            robot.getDriveSubsystem().mecanumDrive(gamepad1.left_stick_y, gamepad1.left_stick_x,
+            robot.getDriveSubsystem().fieldCentricMecanumDrive(gamepad1.left_stick_y, gamepad1.left_stick_x,
                     gamepad1.right_stick_x, DriveMode.Economy);
         }
 
