@@ -101,4 +101,8 @@ public class TrapezoidalMotionProfile {
         accelerations = accelerations_temp.toArray(accelerations);
     }
 
+    public Double[] getVelocities() {
+        return velocities;
+    }
+
 }
