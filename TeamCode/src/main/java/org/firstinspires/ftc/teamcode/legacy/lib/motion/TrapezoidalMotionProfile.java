@@ -1,10 +1,12 @@
 package org.firstinspires.ftc.teamcode.legacy.lib.motion;
 
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+
 import org.firstinspires.ftc.teamcode.legacy.lib.util.MathFx;
 
 import java.util.ArrayList;
 
-public class TrapezoidalMotionProfile {
+public class TrapezoidalMotionProfile extends Profile {
     private double position, velocity, acceleration;
     private double maxVelocity, maxAcceleration;
     private Double[] positions, velocities, accelerations;
@@ -22,7 +24,8 @@ public class TrapezoidalMotionProfile {
         generateProfile(set_position);
     }
 
-    public void generateProfile(double set_position) {
+    @Override
+    public Double[] generateProfile(double set_position) {
         while (Math.abs(error) < 0.05) {
             double output_acceleration;
             double output_velocity;
@@ -48,6 +51,11 @@ public class TrapezoidalMotionProfile {
             error = set_position - position;
         }
         output();
+        return getVelocities();
+    }
+
+    public void run(DcMotorEx[] drivers) {
+        super.run(getVelocities(), drivers);
     }
 
     public void setSet_position(double set_position) {
