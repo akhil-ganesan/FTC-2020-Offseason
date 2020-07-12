@@ -16,7 +16,5 @@ Under the TeamCode Module, all our code is stored (within the legacy folder). Wi
 * a module for storing the finite state machines: [states](legacy/states)
 * a collection of the robot's system-specific code: [subsystems](legacy/subsystems)
   * Drive Subsystem
-  * Inertal Measurement Unit Subsystem
-  * Vuforia Vision Subsystem
-  * TensorFlow Vision Subsystem
+  * Vision Subsystem
 
