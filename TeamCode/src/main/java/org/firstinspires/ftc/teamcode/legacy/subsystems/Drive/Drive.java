@@ -5,7 +5,9 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.legacy.lib.motion.TrapezoidalMotionProfile;
 import org.firstinspires.ftc.teamcode.legacy.src.Constants;
-import org.firstinspires.ftc.teamcode.legacy.states.StateMachine;
+import org.firstinspires.ftc.teamcode.legacy.subsystems.Drive.IMU.IMU;
+import org.firstinspires.ftc.teamcode.legacy.subsystems.Drive.IMU.KLNavX;
+import org.firstinspires.ftc.teamcode.legacy.subsystems.Drive.IMU.REV_IMU;
 import org.firstinspires.ftc.teamcode.legacy.subsystems.Subsystem;
 import org.firstinspires.ftc.teamcode.legacy.subsystems.Vision.Vision;
 
@@ -15,10 +17,17 @@ public class Drive extends Subsystem {
     private DcMotorEx frontLeft, frontRight, backLeft, backRight;
     private DcMotorEx[] driveMotors;
     private IMU imu;
+    private REV_IMU imu2;
     private Vision vision;
 
     public Drive(IMU imu, Vision vision) {
         setImu(imu);
+        setVision(vision);
+    }
+
+    public Drive(KLNavX navX, REV_IMU imu, Vision vision) {
+        setImu(navX);
+        setImu2(imu);
         setVision(vision);
     }
 
@@ -40,10 +49,12 @@ public class Drive extends Subsystem {
         }
     }
 
-    @Override
+    /*@Override
     public StateMachine getStateMachine() {
         return null;
     }
+
+     */
 
     // Autonomous Algorithms
 
@@ -249,5 +260,9 @@ public class Drive extends Subsystem {
 
     public void setVision(Vision vision) {
         this.vision = vision;
+    }
+
+    public void setImu2(REV_IMU imu2) {
+        this.imu2 = imu2;
     }
 }
