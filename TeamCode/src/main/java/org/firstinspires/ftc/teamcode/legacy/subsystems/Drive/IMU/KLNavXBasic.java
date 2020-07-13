@@ -10,7 +10,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
-public class KLNavX extends IMU {
+public class KLNavXBasic extends IMU {
     IntegratingGyroscope gyro;
     NavxMicroNavigationSensor navX;
     AngularVelocity rates;

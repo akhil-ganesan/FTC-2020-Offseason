@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.teamcode.legacy.lib.motion.TrapezoidalMotionProfile;
 import org.firstinspires.ftc.teamcode.legacy.src.Constants;
 import org.firstinspires.ftc.teamcode.legacy.subsystems.Drive.IMU.IMU;
-import org.firstinspires.ftc.teamcode.legacy.subsystems.Drive.IMU.KLNavX;
+import org.firstinspires.ftc.teamcode.legacy.subsystems.Drive.IMU.KLNavXBasic;
 import org.firstinspires.ftc.teamcode.legacy.subsystems.Drive.IMU.REV_IMU;
 import org.firstinspires.ftc.teamcode.legacy.subsystems.Subsystem;
 import org.firstinspires.ftc.teamcode.legacy.subsystems.Vision.Vision;
@@ -25,7 +25,7 @@ public class Drive extends Subsystem {
         setVision(vision);
     }
 
-    public Drive(KLNavX navX, REV_IMU imu, Vision vision) {
+    public Drive(IMU navX, REV_IMU imu, Vision vision) {
         setImu(navX);
         setImu2(imu);
         setVision(vision);

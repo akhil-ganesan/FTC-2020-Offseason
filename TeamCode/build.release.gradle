@@ -1,3 +1,9 @@
+repositories {
+    flatDir {
+        dirs 'libs', 'C:\\Users\\akhil\\navx-micro\\android\\libs'
+    }
+}
+
 dependencies {
     implementation project(':FtcRobotController')
     implementation (name: 'RobotCore-release', ext: 'aar')
@@ -6,4 +12,5 @@ dependencies {
     implementation (name: 'WirelessP2p-release', ext:'aar')
     implementation (name: 'tfod-release', ext:'aar')
     implementation (name: 'tensorflow-lite-0.0.0-nightly', ext:'aar')
+    compile (name:'navx_ftc-release', ext:'aar')
 }

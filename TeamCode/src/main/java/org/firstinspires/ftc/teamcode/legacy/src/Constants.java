@@ -3,6 +3,8 @@ package org.firstinspires.ftc.teamcode.legacy.src;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 
+import java.text.DecimalFormat;
+
 import static org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer.CameraDirection.BACK;
 
 public final class Constants {
@@ -16,6 +18,16 @@ public final class Constants {
     public static final double DRIVE_P = 5.0;
     public static final double turnScaling = 1;
     public static final double strafeScaling = 1.5;
+    // Kauai Labs NavX Sensor
+    public static final int NAVX_DIM_I2C_PORT = 0;
+    public static final byte NAVX_DEVICE_UPDATE_RATE_HZ = 50;
+    public static final double TOLERANCE_DEGREES = 2.0;
+    public static final double MIN_MOTOR_OUTPUT_VALUE = -1.0;
+    public static final double MAX_MOTOR_OUTPUT_VALUE = 1.0;
+    public static final double YAW_PID_P = 0.005;
+    public static final double YAW_PID_I = 0.0;
+    public static final double YAW_PID_D = 0.0;
+    //public static final DecimalFormat df = new DecimalFormat("#.##");
     // --------------------------
     //  Vuforia Vision Constants
     // --------------------------
