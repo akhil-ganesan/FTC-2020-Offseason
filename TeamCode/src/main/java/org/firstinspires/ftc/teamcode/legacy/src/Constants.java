@@ -59,4 +59,9 @@ public final class Constants {
     public static final String TFOD_MODEL_ASSET = "Skystone.tflite";
     public static final String LABEL_FIRST_ELEMENT = "Stone";
     public static final String LABEL_SECOND_ELEMENT = "Skystone";
+    // Odometry Constants
+    public static double ENCODER_DIFFERENCE = 0;
+    public static double HORIZONTAL_OFFSET = 0;
+    public static final int dt = 100;
+    public static final String horizontal = "Horizontal";
 }

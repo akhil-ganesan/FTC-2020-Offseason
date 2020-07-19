@@ -4,10 +4,10 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.legacy.lib.drivers.Motor;
 import org.firstinspires.ftc.teamcode.legacy.subsystems.Drive.Drive;
-import org.firstinspires.ftc.teamcode.legacy.subsystems.Drive.IMU.KLAHRS;
-import org.firstinspires.ftc.teamcode.legacy.subsystems.Drive.IMU.KLNavXBasic;
 import org.firstinspires.ftc.teamcode.legacy.subsystems.Drive.IMU.REV_IMU;
+import org.firstinspires.ftc.teamcode.legacy.subsystems.Drive.Odometry.OdometryGPS;
 import org.firstinspires.ftc.teamcode.legacy.subsystems.Subsystem;
 import org.firstinspires.ftc.teamcode.legacy.subsystems.Vision.Vuforia;
 
@@ -20,10 +20,12 @@ public class Robot {
     private Subsystem[] subsystems;
 
     private REV_IMU imu = new REV_IMU();
-    //private KLAHRS navX = new KLAHRS();
+    //private AHRS navX = new KLAHRS();
     private Vuforia vuforia = new Vuforia();
+    private OdometryGPS odometry = new OdometryGPS(Motor.GoBILDA_312.getTicksPerInch(), Constants.dt);
     //private Drive DriveSubsystem = new Drive(navX, imu, vuforia);
-    private Drive DriveSubsystem = new Drive(imu, vuforia);
+    //private Drive DriveSubsystem = new Drive(imu, vuforia);
+    private Drive DriveSubsystem = new Drive(imu, vuforia, odometry);
 
     public Robot(HardwareMap hMap, Telemetry tele) {
         hardwareMap = hMap;
@@ -31,7 +33,7 @@ public class Robot {
     }
 
     public void init() {
-        subsystems = new Subsystem[]{DriveSubsystem, imu};
+        subsystems = new Subsystem[]{DriveSubsystem, imu, vuforia, odometry};
 
         for (Subsystem subsystem : subsystems) {
             subsystem.init(hardwareMap);
@@ -47,15 +49,26 @@ public class Robot {
     public void Telemetry() {
         // Robot Init
         telemetry.addLine()
-                .addData("Robot Initialized:", true);
+                .addData("Robot Initialized: ", true);
         // Game State
         telemetry.addLine()
-                .addData("Game State", getGameState().getName());
+                .addData("Game State: ", getGameState().getName());
         // IMU Measurements
         telemetry.addLine()
-                .addData("Roll", getImu().getRoll())
-                .addData("Pitch", getImu().getPitch())
-                .addData("Heading", getImu().getHeading());
+                .addData("IMU Roll: ", getImu().getRoll())
+                .addData("IMU Pitch: ", getImu().getPitch())
+                .addData("IMU Heading: ", getImu().getHeading());
+        // Odometry
+        telemetry.addLine()
+                .addData("X: ", getOdometry().getX())
+                .addData("Y: ", getOdometry().getY())
+                .addData("Theta: ", getOdometry().getTheta());
+        // Collision Detection
+        telemetry.addLine()
+                .addData("Collision Detected: ", getImu().getCollision());
+        // Drive Mode
+        telemetry.addLine()
+                .addData("Drive Mode: ", getDriveSubsystem().getDriveMode().getName());
 
         telemetry.update();
     }
@@ -82,5 +95,9 @@ public class Robot {
 
     public void setGameState(GameState gameState) {
         this.gameState = gameState;
+    }
+
+    public OdometryGPS getOdometry() {
+        return odometry;
     }
 }

@@ -1,13 +1,16 @@
 package org.firstinspires.ftc.teamcode.legacy.subsystems.Drive;
 
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.teamcode.legacy.lib.drivers.Motor;
 import org.firstinspires.ftc.teamcode.legacy.lib.motion.TrapezoidalMotionProfile;
+import org.firstinspires.ftc.teamcode.legacy.lib.util.MathFx;
 import org.firstinspires.ftc.teamcode.legacy.src.Constants;
 import org.firstinspires.ftc.teamcode.legacy.subsystems.Drive.IMU.IMU;
-import org.firstinspires.ftc.teamcode.legacy.subsystems.Drive.IMU.KLNavXBasic;
 import org.firstinspires.ftc.teamcode.legacy.subsystems.Drive.IMU.REV_IMU;
+import org.firstinspires.ftc.teamcode.legacy.subsystems.Drive.Odometry.OdometryGPS;
 import org.firstinspires.ftc.teamcode.legacy.subsystems.Subsystem;
 import org.firstinspires.ftc.teamcode.legacy.subsystems.Vision.Vision;
 
@@ -15,10 +18,14 @@ import java.util.Arrays;
 
 public class Drive extends Subsystem {
     private DcMotorEx frontLeft, frontRight, backLeft, backRight;
+    private DcMotor left, right, horizontal;
     private DcMotorEx[] driveMotors;
     private IMU imu;
     private REV_IMU imu2;
     private Vision vision;
+    private OdometryGPS odometry;
+    private DriveMode driveMode = DriveMode.Balanced;
+    private int driveType = 0; // 0 - Field-Centric, 1 - POV
 
     public Drive(IMU imu, Vision vision) {
         setImu(imu);
@@ -31,12 +38,22 @@ public class Drive extends Subsystem {
         setVision(vision);
     }
 
+    public Drive(IMU imu, Vision vision, OdometryGPS odometry) {
+        setImu(imu);
+        setVision(vision);
+        setOdometry(odometry);
+    }
+
     @Override
     public void init(HardwareMap ahMap) {
         frontLeft = ahMap.get(DcMotorEx.class, Constants.frontLeft);
         frontRight = ahMap.get(DcMotorEx.class, Constants.frontRight);
         backLeft = ahMap.get(DcMotorEx.class, Constants.backLeft);
         backRight = ahMap.get(DcMotorEx.class, Constants.backRight);
+
+        left = ahMap.get(DcMotor.class, Constants.frontLeft);
+        right = ahMap.get(DcMotor.class, Constants.frontRight);
+        //horizontal = ahMap.get(DcMotor.class, Constants.horizontal);
 
         frontRight.setDirection(DcMotorEx.Direction.REVERSE);
         backRight.setDirection(DcMotorEx.Direction.REVERSE);
@@ -47,7 +64,9 @@ public class Drive extends Subsystem {
             motor.setPositionPIDFCoefficients(Constants.DRIVE_P);
             motor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         }
+
     }
+
 
     /*@Override
     public StateMachine getStateMachine() {
@@ -148,7 +167,7 @@ public class Drive extends Subsystem {
      * @param power Speed of movement
      * @param heading rotation angle
      */
-    public void rotateGyro(double power, double heading) {
+    public void pointRotateGyro(double power, double heading) {
         if (heading < 0) {
             while (imu.getHeading() < heading) {
                 setRotateMotors(-power);
@@ -190,7 +209,7 @@ public class Drive extends Subsystem {
      * @param turn Rotational Force (GamePad Right Stick x)
      * @param mode Drivetrain Speed Setting (Sport, Normal, Economy)
      */
-    public void mecanumDrive(double y, double x, double turn, DriveMode mode) {
+    public void POVMecanumDrive(double y, double x, double turn, DriveMode mode) {
 
         double v1 = -(y - (turn * Constants.strafeScaling) - (x/Constants.turnScaling));
         double v2 = -(y - (turn * Constants.strafeScaling) + (x/Constants.turnScaling));
@@ -247,7 +266,47 @@ public class Drive extends Subsystem {
         x = x * Math.cos(imu.getHeading()) - y * Math.sin(imu.getHeading());
         y = x * Math.sin(imu.getHeading()) + y * Math.cos(imu.getHeading());
 
-        mecanumDrive(y, x, turn, mode);
+        POVMecanumDrive(y, x, turn, mode);
+    }
+
+    /**
+     * Ultimate Drive Controller
+     * @param y Forward/Backward Force (GamePad Left Stick y)
+     * @param x Left/Right (Strafe) Force (GamePad Left Stick x)
+     * @param turn Rotational Force (GamePad Right Stick x)
+     * @param left_trigger Lower Gear Adjustment
+     * @param right_trigger Higher Gear Adjustment
+     * @param left_bumper Field-Centric Drive Setter
+     * @param right_bumper Point-of-View Drive Setter
+     */
+    public void ultimateDriveController(double y, double x, double turn, float left_trigger,
+                                        float right_trigger, boolean left_bumper, boolean right_bumper) {
+        double mode = driveMode.getId();
+        double modeChange = right_trigger - left_trigger;
+        if (Math.abs(modeChange) > 0.5) {
+            mode = MathFx.scale(-1, 1, Math.round(mode + modeChange));
+        }
+
+        driveMode = getDMbyID(mode);
+
+        if (left_bumper) {
+            setDriveType(0);
+        }
+
+        if (right_bumper) {
+            setDriveType(1);
+        }
+
+        switch (driveType) {
+            case 0:
+                fieldCentricMecanumDrive(y, x, turn, driveMode);
+                break;
+            case 1:
+                POVMecanumDrive(y, x, turn, driveMode);
+                break;
+        }
+
+
     }
 
     public void setImu(IMU imu) {
@@ -264,5 +323,51 @@ public class Drive extends Subsystem {
 
     public void setImu2(REV_IMU imu2) {
         this.imu2 = imu2;
+    }
+
+    public DriveMode getDriveMode() {
+        return driveMode;
+    }
+
+    public void setDriveMode(DriveMode driveMode) {
+        this.driveMode = driveMode;
+    }
+
+    public DriveMode getDMbyID(double id) {
+        if (id == -1) {
+            return DriveMode.Economy;
+        } else if (id == 0) {
+            return DriveMode.Balanced;
+        } else {
+            return DriveMode.Sport;
+        }
+    }
+
+    public double getDriveType() {
+        return driveType;
+    }
+
+    public void setDriveType(int driveType) {
+        this.driveType = driveType;
+    }
+
+    public DcMotor getLeft() {
+        return left;
+    }
+
+    public DcMotor getRight() {
+        return right;
+    }
+
+    public DcMotor getHorizontal() {
+        return horizontal;
+    }
+
+    public OdometryGPS getOdometry() {
+        return odometry;
+    }
+
+    public void setOdometry(OdometryGPS odometry) {
+        this.odometry = odometry;
     }
 }

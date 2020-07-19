@@ -22,7 +22,7 @@ public class Test_Chassis extends OpMode {
 
         if (robot.getGameState() == GameState.TeleOp) {
             robot.getDriveSubsystem().fieldCentricMecanumDrive(gamepad1.left_stick_y, gamepad1.left_stick_x,
-                    gamepad1.right_stick_x, DriveMode.Normal);
+                    gamepad1.right_stick_x, DriveMode.Balanced);
         } else {
             robot.getDriveSubsystem().fieldCentricMecanumDrive(gamepad1.left_stick_y, gamepad1.left_stick_x,
                     gamepad1.right_stick_x, DriveMode.Economy);

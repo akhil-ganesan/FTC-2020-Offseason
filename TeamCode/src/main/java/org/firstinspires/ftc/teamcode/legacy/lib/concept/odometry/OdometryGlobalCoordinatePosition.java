@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.legacy.lib.concept.odometry;
+package org.firstinspires.ftc.teamcode.legacy.lib.concept.Odometry;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ReadWriteFile;

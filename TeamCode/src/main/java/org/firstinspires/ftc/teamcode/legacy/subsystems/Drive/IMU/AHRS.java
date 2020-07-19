@@ -5,14 +5,14 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import static org.firstinspires.ftc.teamcode.legacy.src.Constants.*;
 
-public class KLAHRS extends IMU {
-    private AHRS NavX;
+public class AHRS extends IMU {
+    private com.kauailabs.navx.ftc.AHRS NavX;
 
     @Override
     public void init(HardwareMap ahMap) {
-        NavX = AHRS.getInstance(ahMap.deviceInterfaceModule.get("dim"),
+        NavX = com.kauailabs.navx.ftc.AHRS.getInstance(ahMap.deviceInterfaceModule.get("dim"),
                 NAVX_DIM_I2C_PORT,
-                AHRS.DeviceDataType.kProcessedData,
+                com.kauailabs.navx.ftc.AHRS.DeviceDataType.kProcessedData,
                 NAVX_DEVICE_UPDATE_RATE_HZ);
     }
 
@@ -24,6 +24,11 @@ public class KLAHRS extends IMU {
     @Override
     public double getRoll() {
         return NavX.getRoll();
+    }
+
+    @Override
+    public boolean getCollision() {
+        return false;
     }
 
     @Override

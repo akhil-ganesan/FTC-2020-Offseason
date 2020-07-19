@@ -27,4 +27,8 @@ public enum Motor {
     public double getENCODER_TICKS_PER_REVOLUTION() {
         return ENCODER_TICKS_PER_REVOLUTION;
     }
+
+    public double getTicksPerInch() {
+        return getENCODER_TICKS_PER_REVOLUTION()/3.937;
+    }
 }

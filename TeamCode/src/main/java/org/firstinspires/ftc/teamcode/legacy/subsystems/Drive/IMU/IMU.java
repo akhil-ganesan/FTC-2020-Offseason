@@ -12,5 +12,7 @@ public abstract class IMU extends Subsystem {
 
     public abstract double getPitch();
 
+    public abstract boolean getCollision();
+
 
 }

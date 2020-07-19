@@ -16,6 +16,9 @@ public class REV_IMU extends IMU {
     private BNO055IMU imu;
     private Orientation angles;
     private Acceleration gravity;
+    double last_world_linear_accel_x = 0.0;
+    double last_world_linear_accel_y = 0.0;
+    private final double COLLISION_THRESHOLD_DELTA_G = 0.5;
 
     @Override
     public void init(HardwareMap ahMap) {
@@ -44,19 +47,38 @@ public class REV_IMU extends IMU {
     @Override
     public double getHeading() {
         angles   = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-        return angles.firstAngle;
+        return -angles.firstAngle;
     }
 
     @Override
     public double getRoll() {
         angles   = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-        return angles.secondAngle;
+        return -angles.secondAngle;
     }
 
     @Override
     public double getPitch() {
         angles   = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-        return angles.thirdAngle;
+        return -angles.thirdAngle;
+    }
+
+    @Override
+    public boolean getCollision() {
+        boolean collision = false;
+
+        double curr_world_linear_accel_x = imu.getLinearAcceleration().xAccel;
+        double currentJerkX = curr_world_linear_accel_x - last_world_linear_accel_x;
+        last_world_linear_accel_x = curr_world_linear_accel_x;
+        double curr_world_linear_accel_y = imu.getLinearAcceleration().yAccel;
+        double currentJerkY = curr_world_linear_accel_y - last_world_linear_accel_y;
+        last_world_linear_accel_y = curr_world_linear_accel_y;
+
+        if ( ( Math.abs(currentJerkX) > COLLISION_THRESHOLD_DELTA_G ) ||
+                ( Math.abs(currentJerkY) > COLLISION_THRESHOLD_DELTA_G) ) {
+            collision = true;
+        }
+
+        return collision;
     }
 
     public double getGravity() {

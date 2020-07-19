@@ -10,6 +10,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
+@Deprecated
 public class KLNavXBasic extends IMU {
     IntegratingGyroscope gyro;
     NavxMicroNavigationSensor navX;
@@ -43,6 +44,11 @@ public class KLNavXBasic extends IMU {
     public double getPitch() {
         angles = gyro.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         return angles.thirdAngle;
+    }
+
+    @Override
+    public boolean getCollision() {
+        return false;
     }
 
     public double getDx() {
