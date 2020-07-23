@@ -4,7 +4,8 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.legacy.lib.drivers.Motor;
+import org.firstinspires.ftc.teamcode.lib.drivers.Motor;
+import org.firstinspires.ftc.teamcode.legacy.states.GameState;
 import org.firstinspires.ftc.teamcode.legacy.subsystems.Drive.Drive;
 import org.firstinspires.ftc.teamcode.legacy.subsystems.Drive.IMU.REV_IMU;
 import org.firstinspires.ftc.teamcode.legacy.subsystems.Drive.Odometry.OdometryGPS;

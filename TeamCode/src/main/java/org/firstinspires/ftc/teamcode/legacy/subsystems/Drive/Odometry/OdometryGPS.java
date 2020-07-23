@@ -23,8 +23,7 @@ public class OdometryGPS extends Subsystem {
         horizontalM = 1;
     }
 
-    public OdometryGPS(double ticksPerInch, int dt,
-                       double x0, double y0, double theta0) {
+    public OdometryGPS(double ticksPerInch, int dt, double x0, double y0, double theta0) {
         this.ticksPerInch = ticksPerInch;
         this.dt = dt;
         x = x0;

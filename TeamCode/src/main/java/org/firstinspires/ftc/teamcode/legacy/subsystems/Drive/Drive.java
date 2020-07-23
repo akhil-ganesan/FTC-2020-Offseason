@@ -4,10 +4,10 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.teamcode.legacy.lib.drivers.Motor;
-import org.firstinspires.ftc.teamcode.legacy.lib.motion.TrapezoidalMotionProfile;
-import org.firstinspires.ftc.teamcode.legacy.lib.util.MathFx;
+import org.firstinspires.ftc.teamcode.lib.motion.TrapezoidalMotionProfile;
+import org.firstinspires.ftc.teamcode.lib.util.MathFx;
 import org.firstinspires.ftc.teamcode.legacy.src.Constants;
+import org.firstinspires.ftc.teamcode.legacy.states.DriveMode;
 import org.firstinspires.ftc.teamcode.legacy.subsystems.Drive.IMU.IMU;
 import org.firstinspires.ftc.teamcode.legacy.subsystems.Drive.IMU.REV_IMU;
 import org.firstinspires.ftc.teamcode.legacy.subsystems.Drive.Odometry.OdometryGPS;
