@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.legacy.subsystems.Vision;
+package org.firstinspires.ftc.teamcode.legacy.Vision;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -6,10 +6,11 @@ import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
-import org.firstinspires.ftc.teamcode.legacy.src.Constants;
+import org.firstinspires.ftc.teamcode.team18103.src.Constants;
 
 import java.util.List;
 
+@Deprecated
 public class Tfod extends Vision {
 
     private VuforiaLocalizer vuforia;
@@ -21,7 +22,7 @@ public class Tfod extends Vision {
         VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
 
         parameters.vuforiaLicenseKey = Constants.VUFORIA_KEY;
-        parameters.cameraDirection = Constants.CAMERA_CHOICE;
+        //parameters.cameraDirection = Constants.CAMERA_CHOICE;
 
         vuforia = ClassFactory.getInstance().createVuforia(parameters);
 

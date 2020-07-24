@@ -1,12 +1,12 @@
-package org.firstinspires.ftc.teamcode.legacy.programs.TeleOp;
+package org.firstinspires.ftc.teamcode.team18103.programs.TeleOp;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.legacy.src.Robot;
+import org.firstinspires.ftc.teamcode.team18103.src.Robot;
 
 @TeleOp
-public class TestUltimateChassis extends OpMode {
+public class TestChassis extends OpMode {
     Robot robot = new Robot(hardwareMap, telemetry);
 
     @Override

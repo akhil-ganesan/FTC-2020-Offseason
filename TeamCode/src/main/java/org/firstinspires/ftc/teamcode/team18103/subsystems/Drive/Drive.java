@@ -1,47 +1,46 @@
-package org.firstinspires.ftc.teamcode.legacy.subsystems.Drive;
+package org.firstinspires.ftc.teamcode.team18103.subsystems.Drive;
 
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.lib.motion.TrapezoidalMotionProfile;
 import org.firstinspires.ftc.teamcode.lib.util.MathFx;
-import org.firstinspires.ftc.teamcode.legacy.src.Constants;
-import org.firstinspires.ftc.teamcode.legacy.states.DriveMode;
-import org.firstinspires.ftc.teamcode.legacy.subsystems.Drive.IMU.IMU;
-import org.firstinspires.ftc.teamcode.legacy.subsystems.Drive.IMU.REV_IMU;
-import org.firstinspires.ftc.teamcode.legacy.subsystems.Drive.Odometry.OdometryGPS;
-import org.firstinspires.ftc.teamcode.legacy.subsystems.Subsystem;
-import org.firstinspires.ftc.teamcode.legacy.subsystems.Vision.Vision;
+import org.firstinspires.ftc.teamcode.team18103.src.Constants;
+import org.firstinspires.ftc.teamcode.team18103.states.DriveMode;
+import org.firstinspires.ftc.teamcode.team18103.subsystems.Drive.IMU.IMU;
+import org.firstinspires.ftc.teamcode.team18103.subsystems.Drive.Odometry.OdometryGPS;
+import org.firstinspires.ftc.teamcode.team18103.subsystems.Drive.Vision.VuforiaVision;
+import org.firstinspires.ftc.teamcode.team18103.subsystems.Subsystem;
 
 import java.util.Arrays;
 
 public class Drive extends Subsystem {
     private DcMotorEx frontLeft, frontRight, backLeft, backRight;
-    private DcMotor left, right, horizontal;
     private DcMotorEx[] driveMotors;
-    private IMU imu;
-    private REV_IMU imu2;
-    private Vision vision;
-    private OdometryGPS odometry;
     private DriveMode driveMode = DriveMode.Balanced;
     private int driveType = 0; // 0 - Field-Centric, 1 - POV
+    private IMU imu;
+    private OdometryGPS odometry;
+    private VuforiaVision vision;
 
-    public Drive(IMU imu, Vision vision) {
-        setImu(imu);
-        setVision(vision);
+    public Drive(IMU imu) {
+        this.imu = imu;
     }
 
-    public Drive(IMU navX, REV_IMU imu, Vision vision) {
-        setImu(navX);
-        setImu2(imu);
-        setVision(vision);
+    public Drive(IMU imu, OdometryGPS odometry) {
+        this.imu = imu;
+        this.odometry = odometry;
     }
 
-    public Drive(IMU imu, Vision vision, OdometryGPS odometry) {
-        setImu(imu);
-        setVision(vision);
-        setOdometry(odometry);
+    public Drive(IMU imu, VuforiaVision vision) {
+        this.imu = imu;
+        this.vision = vision;
+    }
+
+    public Drive(IMU imu, OdometryGPS odometry, VuforiaVision vision) {
+        this.imu = imu;
+        this.odometry = odometry;
+        this.vision = vision;
     }
 
     @Override
@@ -51,29 +50,17 @@ public class Drive extends Subsystem {
         backLeft = ahMap.get(DcMotorEx.class, Constants.backLeft);
         backRight = ahMap.get(DcMotorEx.class, Constants.backRight);
 
-        left = ahMap.get(DcMotor.class, Constants.frontLeft);
-        right = ahMap.get(DcMotor.class, Constants.frontRight);
-        //horizontal = ahMap.get(DcMotor.class, Constants.horizontal);
-
         frontRight.setDirection(DcMotorEx.Direction.REVERSE);
         backRight.setDirection(DcMotorEx.Direction.REVERSE);
 
         driveMotors = new DcMotorEx[]{frontLeft, frontRight, backLeft, backRight};
 
         for (DcMotorEx motor : driveMotors) {
-            motor.setPositionPIDFCoefficients(Constants.DRIVE_P);
+            //motor.setPositionPIDFCoefficients(Constants.DRIVE_P);
             motor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         }
 
     }
-
-
-    /*@Override
-    public StateMachine getStateMachine() {
-        return null;
-    }
-
-     */
 
     // Autonomous Algorithms
 
@@ -167,7 +154,7 @@ public class Drive extends Subsystem {
      * @param power Speed of movement
      * @param heading rotation angle
      */
-    public void pointRotateGyro(double power, double heading) {
+    public void IMUPointRotateGyro(double power, double heading) {
         if (heading < 0) {
             while (imu.getHeading() < heading) {
                 setRotateMotors(-power);
@@ -175,6 +162,44 @@ public class Drive extends Subsystem {
             setDriveMotors(0);
         } else if (heading > 0) {
             while (imu.getHeading() > heading) {
+                setRotateMotors(power);
+            }
+            setDriveMotors(0);
+        }
+    }
+
+    /**
+     * Sets drive motors to rotate to a certain angle - (-180, 180) range
+     * @param power Speed of movement
+     * @param heading rotation angle
+     */
+    public void OdometryPointRotateGyro(double power, double heading) {
+        if (heading < 0) {
+            while (odometry.getTheta() < heading) {
+                setRotateMotors(-power);
+            }
+            setDriveMotors(0);
+        } else if (heading > 0) {
+            while (odometry.getTheta() > heading) {
+                setRotateMotors(power);
+            }
+            setDriveMotors(0);
+        }
+    }
+
+    /**
+     * Sets drive motors to rotate to a certain angle - (-180, 180) range
+     * @param power Speed of movement
+     * @param heading rotation angle
+     */
+    public void VisionPointRotateGyro(double power, double heading) {
+        if (heading < 0) {
+            while (vision.getTheta() < heading) {
+                setRotateMotors(-power);
+            }
+            setDriveMotors(0);
+        } else if (heading > 0) {
+            while (vision.getTheta() > heading) {
                 setRotateMotors(power);
             }
             setDriveMotors(0);
@@ -309,22 +334,6 @@ public class Drive extends Subsystem {
 
     }
 
-    public void setImu(IMU imu) {
-        this.imu = imu;
-    }
-
-    public Vision getVision() {
-        return vision;
-    }
-
-    public void setVision(Vision vision) {
-        this.vision = vision;
-    }
-
-    public void setImu2(REV_IMU imu2) {
-        this.imu2 = imu2;
-    }
-
     public DriveMode getDriveMode() {
         return driveMode;
     }
@@ -351,23 +360,7 @@ public class Drive extends Subsystem {
         this.driveType = driveType;
     }
 
-    public DcMotor getLeft() {
-        return left;
-    }
-
-    public DcMotor getRight() {
-        return right;
-    }
-
-    public DcMotor getHorizontal() {
-        return horizontal;
-    }
-
     public OdometryGPS getOdometry() {
         return odometry;
-    }
-
-    public void setOdometry(OdometryGPS odometry) {
-        this.odometry = odometry;
     }
 }

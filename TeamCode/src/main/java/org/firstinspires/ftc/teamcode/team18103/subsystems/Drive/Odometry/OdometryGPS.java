@@ -1,12 +1,11 @@
-package org.firstinspires.ftc.teamcode.legacy.subsystems.Drive.Odometry;
+package org.firstinspires.ftc.teamcode.team18103.subsystems.Drive.Odometry;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.teamcode.legacy.src.Constants;
-import org.firstinspires.ftc.teamcode.legacy.subsystems.Subsystem;
+import org.firstinspires.ftc.teamcode.team18103.src.Constants;
 
-public class OdometryGPS extends Subsystem {
+public class OdometryGPS extends Odometry {
 
     private DcMotor left, right, horizontal;
     private double ticksPerInch;
@@ -43,6 +42,7 @@ public class OdometryGPS extends Subsystem {
         right.setDirection(DcMotor.Direction.REVERSE);
     }
 
+    @Override
     public void run() {
         //Get Current Positions
         leftPos = (left.getCurrentPosition() * leftM);
@@ -72,20 +72,34 @@ public class OdometryGPS extends Subsystem {
         horizontalPrev = horizontalPos;
     }
 
-
+    @Override
     public double getX() {
         run();
         return x;
     }
 
+    @Override
     public double getY() {
         run();
         return y;
     }
 
+    @Override
     public double getTheta() {
         run();
         return theta;
+    }
+
+    public DcMotor getHorizontal() {
+        return horizontal;
+    }
+
+    public DcMotor getLeft() {
+        return left;
+    }
+
+    public DcMotor getRight() {
+        return right;
     }
 
 }

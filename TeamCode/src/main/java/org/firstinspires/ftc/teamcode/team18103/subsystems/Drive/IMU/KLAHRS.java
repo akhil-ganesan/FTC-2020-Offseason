@@ -1,12 +1,14 @@
-package org.firstinspires.ftc.teamcode.legacy.subsystems.Drive.IMU;
+package org.firstinspires.ftc.teamcode.team18103.subsystems.Drive.IMU;
 
 import com.kauailabs.navx.ftc.AHRS;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import static org.firstinspires.ftc.teamcode.legacy.src.Constants.*;
+import static org.firstinspires.ftc.teamcode.team18103.src.Constants.*;
 
 public class KLAHRS extends IMU {
     private AHRS NavX;
+    private double last_world_linear_accel_x = 0.0;
+    private double last_world_linear_accel_y = 0.0;
 
     @Override
     public void init(HardwareMap ahMap) {
@@ -28,6 +30,19 @@ public class KLAHRS extends IMU {
 
     @Override
     public boolean getCollision() {
+        boolean collisionDetected = false;
+
+        double curr_world_linear_accel_x = NavX.getWorldLinearAccelX();
+        double currentJerkX = curr_world_linear_accel_x - last_world_linear_accel_x;
+        last_world_linear_accel_x = curr_world_linear_accel_x;
+        double curr_world_linear_accel_y = NavX.getWorldLinearAccelY();
+        double currentJerkY = curr_world_linear_accel_y - last_world_linear_accel_y;
+        last_world_linear_accel_y = curr_world_linear_accel_y;
+
+        if ( ( Math.abs(currentJerkX) > COLLISION_THRESHOLD_DELTA_G ) ||
+                ( Math.abs(currentJerkY) > COLLISION_THRESHOLD_DELTA_G) ) {
+            collisionDetected = true;
+        }
         return false;
     }
 

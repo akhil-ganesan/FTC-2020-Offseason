@@ -1,16 +1,16 @@
-package org.firstinspires.ftc.teamcode.legacy.src;
+package org.firstinspires.ftc.teamcode.team18103.src;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.lib.drivers.Motor;
-import org.firstinspires.ftc.teamcode.legacy.states.GameState;
-import org.firstinspires.ftc.teamcode.legacy.subsystems.Drive.Drive;
-import org.firstinspires.ftc.teamcode.legacy.subsystems.Drive.IMU.REV_IMU;
-import org.firstinspires.ftc.teamcode.legacy.subsystems.Drive.Odometry.OdometryGPS;
-import org.firstinspires.ftc.teamcode.legacy.subsystems.Subsystem;
-import org.firstinspires.ftc.teamcode.legacy.subsystems.Vision.Vuforia;
+import org.firstinspires.ftc.teamcode.team18103.states.GameState;
+import org.firstinspires.ftc.teamcode.team18103.subsystems.Drive.Drive;
+import org.firstinspires.ftc.teamcode.team18103.subsystems.Drive.IMU.REV_IMU;
+import org.firstinspires.ftc.teamcode.team18103.subsystems.Drive.Odometry.OdometryGPS;
+import org.firstinspires.ftc.teamcode.team18103.subsystems.Drive.Vision.VuforiaVision;
+import org.firstinspires.ftc.teamcode.team18103.subsystems.Subsystem;
 
 public class Robot {
     private Telemetry telemetry;
@@ -22,11 +22,9 @@ public class Robot {
 
     private REV_IMU imu = new REV_IMU();
     //private AHRS navX = new KLAHRS();
-    private Vuforia vuforia = new Vuforia();
     private OdometryGPS odometry = new OdometryGPS(Motor.GoBILDA_312.getTicksPerInch(), Constants.dt);
-    //private Drive DriveSubsystem = new Drive(navX, imu, vuforia);
-    //private Drive DriveSubsystem = new Drive(imu, vuforia);
-    private Drive DriveSubsystem = new Drive(imu, vuforia, odometry);
+    private VuforiaVision vision = new VuforiaVision();
+    private Drive DriveSubsystem = new Drive(imu, odometry, vision);
 
     public Robot(HardwareMap hMap, Telemetry tele) {
         hardwareMap = hMap;
@@ -34,7 +32,7 @@ public class Robot {
     }
 
     public void init() {
-        subsystems = new Subsystem[]{DriveSubsystem, imu, vuforia, odometry};
+        subsystems = new Subsystem[]{DriveSubsystem, imu, odometry, vision};
 
         for (Subsystem subsystem : subsystems) {
             subsystem.init(hardwareMap);

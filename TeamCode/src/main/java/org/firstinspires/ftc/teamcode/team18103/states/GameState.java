@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.legacy.states;
+package org.firstinspires.ftc.teamcode.team18103.states;
 
 public enum GameState {
     TeleOp(0, 120, "TeleOp"),

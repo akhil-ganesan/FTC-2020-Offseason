@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.legacy.subsystems.Drive.IMU;
+package org.firstinspires.ftc.teamcode.team18103.subsystems.Drive.IMU;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
@@ -12,13 +12,14 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 
+import static org.firstinspires.ftc.teamcode.team18103.src.Constants.COLLISION_THRESHOLD_DELTA_G;
+
 public class REV_IMU extends IMU {
     private BNO055IMU imu;
     private Orientation angles;
     private Acceleration gravity;
-    double last_world_linear_accel_x = 0.0;
-    double last_world_linear_accel_y = 0.0;
-    private final double COLLISION_THRESHOLD_DELTA_G = 0.5;
+    private double last_world_linear_accel_x = 0.0;
+    private double last_world_linear_accel_y = 0.0;
 
     @Override
     public void init(HardwareMap ahMap) {

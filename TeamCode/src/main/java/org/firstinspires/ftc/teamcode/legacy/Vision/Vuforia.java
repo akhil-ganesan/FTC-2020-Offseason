@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.legacy.subsystems.Vision;
+package org.firstinspires.ftc.teamcode.legacy.Vision;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -8,7 +8,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
-import org.firstinspires.ftc.teamcode.legacy.src.Constants;
+import org.firstinspires.ftc.teamcode.team18103.src.Constants;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,17 +18,17 @@ import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.XYZ;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.YZX;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesReference.EXTRINSIC;
 import static org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer.CameraDirection.BACK;
-import static org.firstinspires.ftc.teamcode.legacy.src.Constants.bridgeRotY;
-import static org.firstinspires.ftc.teamcode.legacy.src.Constants.bridgeRotZ;
-import static org.firstinspires.ftc.teamcode.legacy.src.Constants.bridgeX;
-import static org.firstinspires.ftc.teamcode.legacy.src.Constants.bridgeY;
-import static org.firstinspires.ftc.teamcode.legacy.src.Constants.bridgeZ;
-import static org.firstinspires.ftc.teamcode.legacy.src.Constants.halfField;
-import static org.firstinspires.ftc.teamcode.legacy.src.Constants.mmTargetHeight;
-import static org.firstinspires.ftc.teamcode.legacy.src.Constants.quadField;
-import static org.firstinspires.ftc.teamcode.legacy.src.Constants.stoneZ;
-import static org.firstinspires.ftc.teamcode.legacy.src.Constants.targetsSkyStone;
+import static org.firstinspires.ftc.teamcode.team18103.src.Constants.bridgeRotY;
+import static org.firstinspires.ftc.teamcode.team18103.src.Constants.bridgeRotZ;
+import static org.firstinspires.ftc.teamcode.team18103.src.Constants.bridgeX;
+import static org.firstinspires.ftc.teamcode.team18103.src.Constants.bridgeY;
+import static org.firstinspires.ftc.teamcode.team18103.src.Constants.bridgeZ;
+import static org.firstinspires.ftc.teamcode.team18103.src.Constants.halfField;
+import static org.firstinspires.ftc.teamcode.team18103.src.Constants.mmTargetHeight;
+import static org.firstinspires.ftc.teamcode.team18103.src.Constants.quadField;
+import static org.firstinspires.ftc.teamcode.team18103.src.Constants.stoneZ;
 
+@Deprecated
 public class Vuforia extends Vision {
     private OpenGLMatrix lastLocation = null;
     private VuforiaLocalizer vuforia = null;
@@ -44,11 +44,12 @@ public class Vuforia extends Vision {
         VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
 
         parameters.vuforiaLicenseKey = Constants.VUFORIA_KEY;
-        parameters.cameraDirection   = Constants.CAMERA_CHOICE;
+        //parameters.cameraDirection   = Constants.CAMERA_CHOICE;
 
         vuforia = ClassFactory.getInstance().createVuforia(parameters);
 
         initVuforia();
+        /*
 
         if (Constants.CAMERA_CHOICE == BACK) {
             phoneYRotate = -90;
@@ -59,6 +60,8 @@ public class Vuforia extends Vision {
         if (Constants.PHONE_IS_PORTRAIT) {
             phoneXRotate = 90 ;
         }
+
+         */
 
         OpenGLMatrix robotFromCamera = OpenGLMatrix
                 .translation(Constants.CAMERA_FORWARD_DISPLACEMENT, Constants.CAMERA_LEFT_DISPLACEMENT, Constants.CAMERA_VERTICAL_DISPLACEMENT)
@@ -82,6 +85,7 @@ public class Vuforia extends Vision {
     }
 
     private void initVuforia() {
+        /*
         targetsSkyStone = this.vuforia.loadTrackablesFromAsset("Skystone");
 
         VuforiaTrackable stoneTarget = targetsSkyStone.get(0);
@@ -164,6 +168,8 @@ public class Vuforia extends Vision {
         rear2.setLocation(OpenGLMatrix
                 .translation(halfField, -quadField, mmTargetHeight)
                 .multiplied(Orientation.getRotationMatrix(EXTRINSIC, XYZ, DEGREES, 90, 0, -90)));
+
+         */
     }
 
 }

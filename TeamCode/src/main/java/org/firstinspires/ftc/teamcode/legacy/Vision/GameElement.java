@@ -1,11 +1,12 @@
-package org.firstinspires.ftc.teamcode.legacy.subsystems.Vision;
+package org.firstinspires.ftc.teamcode.legacy.Vision;
 
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
-import org.firstinspires.ftc.teamcode.legacy.src.Constants;
+import org.firstinspires.ftc.teamcode.team18103.src.Constants;
 
-public enum GameElement {
-    ElementA("ElementA", Constants.targetsSkyStone.get(0), "Name1"),
-    ElementB("ElementB", Constants.targetsSkyStone.get(1), "Name2");
+@Deprecated
+public enum GameElement {; //Delete
+    //ElementA("ElementA", Constants.targetsSkyStone.get(0), "Name1"),
+    //ElementB("ElementB", Constants.targetsSkyStone.get(1), "Name2");
 
     private final String TfodLabel;
     private final VuforiaTrackable vuforiaLabel;

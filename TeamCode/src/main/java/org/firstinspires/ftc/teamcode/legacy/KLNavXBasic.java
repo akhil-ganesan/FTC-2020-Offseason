@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.legacy.subsystems.Drive.IMU;
+package org.firstinspires.ftc.teamcode.legacy;
 
 import com.qualcomm.hardware.kauailabs.NavxMicroNavigationSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -9,6 +9,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngularVelocity;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.teamcode.team18103.subsystems.Drive.IMU.IMU;
 
 @Deprecated
 public class KLNavXBasic extends IMU {
