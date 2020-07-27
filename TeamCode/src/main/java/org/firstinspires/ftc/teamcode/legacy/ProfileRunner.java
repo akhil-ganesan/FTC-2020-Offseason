@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.lib.motion;
+package org.firstinspires.ftc.teamcode.legacy;
 
 @Deprecated
 public class ProfileRunner {

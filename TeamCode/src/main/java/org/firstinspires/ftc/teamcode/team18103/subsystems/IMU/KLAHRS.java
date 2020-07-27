@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.team18103.subsystems.Drive.IMU;
+package org.firstinspires.ftc.teamcode.team18103.subsystems.IMU;
 
 import com.kauailabs.navx.ftc.AHRS;
 import com.qualcomm.robotcore.hardware.HardwareMap;

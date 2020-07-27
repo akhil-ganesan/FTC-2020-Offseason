@@ -1,15 +1,16 @@
-package org.firstinspires.ftc.teamcode.team18103.subsystems.Drive;
+package org.firstinspires.ftc.teamcode.team18103.subsystems;
 
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.teamcode.lib.motion.TrapezoidalMotionProfile;
+import org.firstinspires.ftc.teamcode.lib.drivers.Motor;
+import org.firstinspires.ftc.teamcode.lib.motion.simple.TrapezoidalMotionProfile;
 import org.firstinspires.ftc.teamcode.lib.util.MathFx;
 import org.firstinspires.ftc.teamcode.team18103.src.Constants;
 import org.firstinspires.ftc.teamcode.team18103.states.DriveMode;
-import org.firstinspires.ftc.teamcode.team18103.subsystems.Drive.IMU.IMU;
-import org.firstinspires.ftc.teamcode.team18103.subsystems.Drive.Odometry.OdometryGPS;
-import org.firstinspires.ftc.teamcode.team18103.subsystems.Drive.Vision.VuforiaVision;
+import org.firstinspires.ftc.teamcode.team18103.subsystems.IMU.IMU;
+import org.firstinspires.ftc.teamcode.team18103.subsystems.Odometry.OdometryGPS;
+import org.firstinspires.ftc.teamcode.team18103.subsystems.Vision.VuforiaVision;
 import org.firstinspires.ftc.teamcode.team18103.subsystems.Subsystem;
 
 import java.util.Arrays;
@@ -210,7 +211,17 @@ public class Drive extends Subsystem {
 
     public void motionProfileDrive(double distance) {
         TrapezoidalMotionProfile motionProfile = new TrapezoidalMotionProfile(distance);
-        // Loop/Application Protocol
+        for (DcMotorEx i : driveMotors) {
+            i.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        }
+
+        setDriveMotors(motionProfile.getDirection());
+
+        while (!(Math.abs(distance - (frontLeft.getCurrentPosition()/Motor.GoBILDA_312.getTicksPerInch()))
+                <= motionProfile.getDecelerationDist()));
+
+        setDriveMotors(0);
+
     }
 
     // TeleOp Methods

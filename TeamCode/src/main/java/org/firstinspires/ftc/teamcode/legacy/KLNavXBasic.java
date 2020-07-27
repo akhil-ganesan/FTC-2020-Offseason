@@ -9,7 +9,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngularVelocity;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.teamcode.team18103.subsystems.Drive.IMU.IMU;
+import org.firstinspires.ftc.teamcode.team18103.subsystems.IMU.IMU;
 
 @Deprecated
 public class KLNavXBasic extends IMU {

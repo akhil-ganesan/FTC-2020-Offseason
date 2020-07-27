@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.team18103.subsystems.Drive.IMU;
+package org.firstinspires.ftc.teamcode.team18103.subsystems.IMU;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;

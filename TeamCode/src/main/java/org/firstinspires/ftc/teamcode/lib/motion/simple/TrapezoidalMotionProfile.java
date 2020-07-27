@@ -1,7 +1,9 @@
-package org.firstinspires.ftc.teamcode.lib.motion;
+package org.firstinspires.ftc.teamcode.lib.motion.simple;
 
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
+import org.firstinspires.ftc.teamcode.lib.drivers.Motor;
+import org.firstinspires.ftc.teamcode.lib.motion.Profile;
 import org.firstinspires.ftc.teamcode.lib.util.MathFx;
 
 import java.util.ArrayList;
@@ -11,21 +13,21 @@ public class TrapezoidalMotionProfile extends Profile {
     private double maxVelocity, maxAcceleration;
     private Double[] positions, velocities, accelerations;
     private ArrayList<Double> positions_temp, velocities_temp, accelerations_temp;
-    private double error, dt, direction, set_position;
+    private double error, dt, direction, set_position, decelerationDist;
 
     public TrapezoidalMotionProfile(double set_position) {
         setSet_position(set_position);
         setKinematics(0 ,0, 0);
         resetLists();
-        setLimits(100, 300);
+        setLimits(Motor.GoBILDA_312.getRPM(), Motor.GoBILDA_312.getRPM()*2);
         setDt(0.01);
         setError(set_position);
         setDirection();
-        generateProfile(set_position);
+        generateProfile();
     }
 
     @Override
-    public Double[] generateProfile(double set_position) {
+    public Double[] generateProfile() {
         while (Math.abs(error) < 0.05) {
             double output_acceleration;
             double output_velocity;
@@ -52,6 +54,11 @@ public class TrapezoidalMotionProfile extends Profile {
         }
         output();
         return getVelocities();
+    }
+
+    @Override
+    public double getDecelerationDist() {
+        return Math.abs((maxVelocity * maxVelocity)/(2 * maxAcceleration));
     }
 
     public void run(DcMotorEx[] drivers) {
@@ -111,6 +118,10 @@ public class TrapezoidalMotionProfile extends Profile {
 
     public Double[] getVelocities() {
         return velocities;
+    }
+
+    public double getDirection() {
+        return direction;
     }
 
 }

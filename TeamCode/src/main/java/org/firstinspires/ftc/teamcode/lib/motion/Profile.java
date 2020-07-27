@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.lib.motion;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 public abstract class Profile {
-    public abstract Double[] generateProfile(double set_position);
+    public abstract Double[] generateProfile();
 
     public void run(Double[] velocities, DcMotorEx[] drivers) {
         for (double i : velocities) {
@@ -12,5 +12,7 @@ public abstract class Profile {
             }
         }
     }
+
+    public abstract double getDecelerationDist();
 
 }
