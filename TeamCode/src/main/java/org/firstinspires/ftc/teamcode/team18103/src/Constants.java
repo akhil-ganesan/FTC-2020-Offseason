@@ -13,6 +13,7 @@ public final class Constants {
     public static final String backLeft = "Back Left";
     public static final double turnScaling = 1;
     public static final double strafeScaling = 1.5;
+    public static final double Dt = 0.01d;
     // Kauai Labs NavX Sensor
     public static final int NAVX_DIM_I2C_PORT = 0;
     public static final byte NAVX_DEVICE_UPDATE_RATE_HZ = 50;
@@ -60,8 +61,8 @@ public final class Constants {
     // --------------------------
     //  Wheel-Based Odometry
     // --------------------------
-    public static double ENCODER_DIFFERENCE = 0;
-    public static double HORIZONTAL_OFFSET = 0;
+    public static final double ENCODER_DIFFERENCE = 0;
+    public static final double HORIZONTAL_OFFSET = 0;
     public static final int dt = 100;
     public static final String horizontal = "Horizontal";
 

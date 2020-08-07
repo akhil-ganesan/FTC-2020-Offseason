@@ -2,16 +2,17 @@ package org.firstinspires.ftc.teamcode.team18103.subsystems;
 
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.lib.control.PIDSVA;
 import org.firstinspires.ftc.teamcode.lib.drivers.Motor;
-import org.firstinspires.ftc.teamcode.lib.motion.simple.TrapezoidalMotionProfile;
+import org.firstinspires.ftc.teamcode.lib.motion.TrapezoidalMotionProfileGenerator;
 import org.firstinspires.ftc.teamcode.lib.util.MathFx;
 import org.firstinspires.ftc.teamcode.team18103.src.Constants;
 import org.firstinspires.ftc.teamcode.team18103.states.DriveMode;
 import org.firstinspires.ftc.teamcode.team18103.subsystems.IMU.IMU;
 import org.firstinspires.ftc.teamcode.team18103.subsystems.Odometry.OdometryGPS;
 import org.firstinspires.ftc.teamcode.team18103.subsystems.Vision.VuforiaVision;
-import org.firstinspires.ftc.teamcode.team18103.subsystems.Subsystem;
 
 import java.util.Arrays;
 
@@ -210,18 +211,28 @@ public class Drive extends Subsystem {
     // Distanced Driving (Motion Profiling)
 
     public void motionProfileDrive(double distance) {
-        TrapezoidalMotionProfile motionProfile = new TrapezoidalMotionProfile(distance);
+        TrapezoidalMotionProfileGenerator motionProfile = new TrapezoidalMotionProfileGenerator(distance);
         for (DcMotorEx i : driveMotors) {
             i.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+            i.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         }
 
-        setDriveMotors(motionProfile.getDirection());
+        ElapsedTime timer = new ElapsedTime();
+        PIDSVA controller = new PIDSVA(0, 0, 0, 0, 0, 0);
+        while (timer.seconds() < motionProfile.getTotalTime()) {
+            double timeStamp = timer.seconds();
+            double position = motionProfile.getPosition(timeStamp);
+            double velocity = motionProfile.getVelocity(timeStamp);
+            double acceleration = motionProfile.getAcceleration(timeStamp);
+            double error = position - (frontLeft.getCurrentPosition()/ Motor.GoBILDA_312.getTicksPerInch());
+            double output = controller.getOutput(error, velocity, acceleration);
 
-        while (!(Math.abs(distance - (frontLeft.getCurrentPosition()/Motor.GoBILDA_312.getTicksPerInch()))
-                <= motionProfile.getDecelerationDist()));
+            for (DcMotorEx i : driveMotors) {
+                i.setPower(output);
+            }
 
+        }
         setDriveMotors(0);
-
     }
 
     // TeleOp Methods

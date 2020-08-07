@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.lib.motion.simple;
+package org.firstinspires.ftc.teamcode.legacy;
 
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
@@ -8,6 +8,7 @@ import org.firstinspires.ftc.teamcode.lib.util.MathFx;
 
 import java.util.ArrayList;
 
+@Deprecated
 public class TrapezoidalMotionProfile extends Profile {
     private double position, velocity, acceleration;
     private double maxVelocity, maxAcceleration;
@@ -27,7 +28,7 @@ public class TrapezoidalMotionProfile extends Profile {
     }
 
     @Override
-    public Double[] generateProfile() {
+    public void generateProfile() {
         while (Math.abs(error) < 0.05) {
             double output_acceleration;
             double output_velocity;
@@ -53,16 +54,10 @@ public class TrapezoidalMotionProfile extends Profile {
             error = set_position - position;
         }
         output();
-        return getVelocities();
-    }
-
-    @Override
-    public double getDecelerationDist() {
-        return Math.abs((maxVelocity * maxVelocity)/(2 * maxAcceleration));
     }
 
     public void run(DcMotorEx[] drivers) {
-        super.run(getVelocities(), drivers);
+
     }
 
     public void setSet_position(double set_position) {
