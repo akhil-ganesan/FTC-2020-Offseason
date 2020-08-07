@@ -211,14 +211,14 @@ public class Drive extends Subsystem {
     // Distanced Driving (Motion Profiling)
 
     public void motionProfileDrive(double distance) {
-        TrapezoidalMotionProfileGenerator motionProfile = new TrapezoidalMotionProfileGenerator(distance);
+        TrapezoidalMotionProfileGenerator motionProfile = new TrapezoidalMotionProfileGenerator(distance, Motor.GoBILDA_312);
         for (DcMotorEx i : driveMotors) {
             i.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
             i.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         }
 
         ElapsedTime timer = new ElapsedTime();
-        PIDSVA controller = new PIDSVA(0, 0, 0, 0, 0, 0);
+        PIDSVA controller = new PIDSVA(10/12, 1/12, 10/12, 0, 1/motionProfile.getMaxV(), 0.01/12);
         while (timer.seconds() < motionProfile.getTotalTime()) {
             double timeStamp = timer.seconds();
             double position = motionProfile.getPosition(timeStamp);

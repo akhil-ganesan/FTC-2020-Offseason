@@ -22,6 +22,16 @@ public class TrapezoidalMotionProfileGenerator extends Profile {
         generateProfile();
     }
 
+    public TrapezoidalMotionProfileGenerator(double set_position, Motor motor) {
+        setLimits(motor.maxAngularVelocity(), 300d);
+        setError(set_position);
+        setDirection();
+        setDt(Constants.Dt);
+        setTime();
+        setLists();
+        generateProfile();
+    }
+
     @Override
     public void generateProfile() {
         for (int i = 0; i < getTimeSteps(); i++) {
@@ -96,6 +106,10 @@ public class TrapezoidalMotionProfileGenerator extends Profile {
 
     public double getTotalTime() {
         return tT;
+    }
+
+    public double getMaxV() {
+        return maxV;
     }
 
     @Override
