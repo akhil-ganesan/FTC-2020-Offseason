@@ -6,12 +6,13 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.lib.control.PIDSVA;
 import org.firstinspires.ftc.teamcode.lib.drivers.Motor;
+import org.firstinspires.ftc.teamcode.lib.motion.ProfileState;
 import org.firstinspires.ftc.teamcode.lib.motion.TrapezoidalMotionProfileGenerator;
 import org.firstinspires.ftc.teamcode.lib.util.MathFx;
 import org.firstinspires.ftc.teamcode.team18103.src.Constants;
 import org.firstinspires.ftc.teamcode.team18103.states.DriveMode;
 import org.firstinspires.ftc.teamcode.team18103.subsystems.IMU.IMU;
-import org.firstinspires.ftc.teamcode.team18103.subsystems.Odometry.OdometryGPS;
+import org.firstinspires.ftc.teamcode.team18103.subsystems.Odometry.TwoWheelOdometryGPS;
 import org.firstinspires.ftc.teamcode.team18103.subsystems.Vision.VuforiaVision;
 
 import java.util.Arrays;
@@ -22,14 +23,15 @@ public class Drive extends Subsystem {
     private DriveMode driveMode = DriveMode.Balanced;
     private int driveType = 0; // 0 - Field-Centric, 1 - POV
     private IMU imu;
-    private OdometryGPS odometry;
+    private TwoWheelOdometryGPS odometry;
     private VuforiaVision vision;
+    private ProfileState driveState;
 
     public Drive(IMU imu) {
         this.imu = imu;
     }
 
-    public Drive(IMU imu, OdometryGPS odometry) {
+    public Drive(IMU imu, TwoWheelOdometryGPS odometry) {
         this.imu = imu;
         this.odometry = odometry;
     }
@@ -39,7 +41,7 @@ public class Drive extends Subsystem {
         this.vision = vision;
     }
 
-    public Drive(IMU imu, OdometryGPS odometry, VuforiaVision vision) {
+    public Drive(IMU imu, TwoWheelOdometryGPS odometry, VuforiaVision vision) {
         this.imu = imu;
         this.odometry = odometry;
         this.vision = vision;
@@ -170,44 +172,6 @@ public class Drive extends Subsystem {
         }
     }
 
-    /**
-     * Sets drive motors to rotate to a certain angle - (-180, 180) range
-     * @param power Speed of movement
-     * @param heading rotation angle
-     */
-    public void OdometryPointRotateGyro(double power, double heading) {
-        if (heading < 0) {
-            while (odometry.getTheta() < heading) {
-                setRotateMotors(-power);
-            }
-            setDriveMotors(0);
-        } else if (heading > 0) {
-            while (odometry.getTheta() > heading) {
-                setRotateMotors(power);
-            }
-            setDriveMotors(0);
-        }
-    }
-
-    /**
-     * Sets drive motors to rotate to a certain angle - (-180, 180) range
-     * @param power Speed of movement
-     * @param heading rotation angle
-     */
-    public void VisionPointRotateGyro(double power, double heading) {
-        if (heading < 0) {
-            while (vision.getTheta() < heading) {
-                setRotateMotors(-power);
-            }
-            setDriveMotors(0);
-        } else if (heading > 0) {
-            while (vision.getTheta() > heading) {
-                setRotateMotors(power);
-            }
-            setDriveMotors(0);
-        }
-    }
-
     // Distanced Driving (Motion Profiling)
 
     public void motionProfileDrive(double distance) {
@@ -218,7 +182,7 @@ public class Drive extends Subsystem {
         }
 
         ElapsedTime timer = new ElapsedTime();
-        PIDSVA controller = new PIDSVA(10/12, 1/12, 10/12, 0, 1/motionProfile.getMaxV(), 0.01/12);
+        PIDSVA controller = new PIDSVA(10d/12d, 1d/12d, 10d/12d, 0d, 1d/motionProfile.getMaxV(), 0.01d/12d);
         while (timer.seconds() < motionProfile.getTotalTime()) {
             double timeStamp = timer.seconds();
             double position = motionProfile.getPosition(timeStamp);
@@ -230,6 +194,8 @@ public class Drive extends Subsystem {
             for (DcMotorEx i : driveMotors) {
                 i.setPower(output);
             }
+
+            setDriveState(motionProfile.getProfileState(timeStamp));
 
         }
         setDriveMotors(0);
@@ -334,7 +300,7 @@ public class Drive extends Subsystem {
             mode = MathFx.scale(-1, 1, Math.round(mode + modeChange));
         }
 
-        driveMode = getDMbyID(mode);
+        setDriveMode(getDMbyID(mode));
 
         if (left_bumper) {
             setDriveType(0);
@@ -382,7 +348,19 @@ public class Drive extends Subsystem {
         this.driveType = driveType;
     }
 
-    public OdometryGPS getOdometry() {
+    public TwoWheelOdometryGPS getOdometry() {
         return odometry;
+    }
+
+    public VuforiaVision getVision() {
+        return vision;
+    }
+
+    public void setDriveState(ProfileState driveState) {
+        this.driveState = driveState;
+    }
+
+    public ProfileState getDriveState() {
+        return driveState;
     }
 }

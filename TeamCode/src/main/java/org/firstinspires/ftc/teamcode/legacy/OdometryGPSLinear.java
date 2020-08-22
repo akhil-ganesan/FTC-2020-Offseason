@@ -1,11 +1,13 @@
-package org.firstinspires.ftc.teamcode.team18103.subsystems.Odometry;
+package org.firstinspires.ftc.teamcode.legacy;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.team18103.src.Constants;
+import org.firstinspires.ftc.teamcode.team18103.subsystems.Odometry.Odometry;
 
-public class OdometryGPS extends Odometry {
+@Deprecated
+public class OdometryGPSLinear extends Odometry {
 
     private DcMotor left, right, horizontal;
     private double ticksPerInch;
@@ -14,7 +16,7 @@ public class OdometryGPS extends Odometry {
     private double rightPos = 0, leftPos = 0, horizontalPos = 0,  dTheta = 0, x = 0, y = 0,
             theta = 0, rightPrev = 0, leftPrev = 0, horizontalPrev = 0;
 
-    public OdometryGPS(double ticksPerInch, int dt) {
+    public OdometryGPSLinear(double ticksPerInch, int dt) {
         this.ticksPerInch = ticksPerInch;
         this.dt = dt;
         leftM = 1;
@@ -22,7 +24,7 @@ public class OdometryGPS extends Odometry {
         horizontalM = 1;
     }
 
-    public OdometryGPS(double ticksPerInch, int dt, double x0, double y0, double theta0) {
+    public OdometryGPSLinear(double ticksPerInch, int dt, double x0, double y0, double theta0) {
         this.ticksPerInch = ticksPerInch;
         this.dt = dt;
         x = x0;

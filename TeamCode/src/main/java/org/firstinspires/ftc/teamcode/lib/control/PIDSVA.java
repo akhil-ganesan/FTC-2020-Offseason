@@ -13,7 +13,7 @@ public class PIDSVA {
     public double getOutput(double error, double velocity, double acceleration) {
         double kf = ks + (velocity * kv) + (acceleration * ka);
         integral += error * Dt;
-        derivative = (error - prev_error)/Dt;
+        derivative = (error - prev_error)/Dt - velocity;
         prev_error = error;
         return (kp * error) + (ki * integral) + (kd * derivative) + kf;
     }

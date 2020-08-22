@@ -12,6 +12,8 @@ public abstract class Profile {
 
     public abstract double getPosition(double timeStamp);
 
+    public abstract ProfileState getProfileState(double timeStamp);
+
     /*
     public void run(Double[] velocities, DcMotorEx[] drivers) {
         for (double i : velocities) {

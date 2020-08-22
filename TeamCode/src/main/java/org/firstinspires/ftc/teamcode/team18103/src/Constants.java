@@ -61,7 +61,7 @@ public final class Constants {
     // --------------------------
     //  Wheel-Based Odometry
     // --------------------------
-    public static final double ENCODER_DIFFERENCE = 0;
+    public static final double ENCODER_DIFFERENCE = 1;
     public static final double HORIZONTAL_OFFSET = 0;
     public static final int dt = 100;
     public static final String horizontal = "Horizontal";

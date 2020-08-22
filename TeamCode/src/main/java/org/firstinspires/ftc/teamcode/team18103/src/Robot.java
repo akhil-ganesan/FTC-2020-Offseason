@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.lib.drivers.Motor;
 import org.firstinspires.ftc.teamcode.team18103.states.GameState;
 import org.firstinspires.ftc.teamcode.team18103.subsystems.Drive;
 import org.firstinspires.ftc.teamcode.team18103.subsystems.IMU.REV_IMU;
-import org.firstinspires.ftc.teamcode.team18103.subsystems.Odometry.OdometryGPS;
+import org.firstinspires.ftc.teamcode.team18103.subsystems.Odometry.TwoWheelOdometryGPS;
 import org.firstinspires.ftc.teamcode.team18103.subsystems.Vision.VuforiaVision;
 import org.firstinspires.ftc.teamcode.team18103.subsystems.Subsystem;
 
@@ -22,7 +22,7 @@ public class Robot {
 
     private REV_IMU imu = new REV_IMU();
     //private AHRS navX = new KLAHRS();
-    private OdometryGPS odometry = new OdometryGPS(Motor.GoBILDA_312.getTicksPerInch(), Constants.dt);
+    private TwoWheelOdometryGPS odometry = new TwoWheelOdometryGPS(Motor.GoBILDA_312.getTicksPerInch(), Constants.dt);
     private VuforiaVision vision = new VuforiaVision();
     private Drive DriveSubsystem = new Drive(imu, odometry, vision);
 
@@ -32,7 +32,7 @@ public class Robot {
     }
 
     public void init() {
-        subsystems = new Subsystem[]{DriveSubsystem, imu, odometry, vision};
+        subsystems = new Subsystem[]{DriveSubsystem, imu, vision, odometry};
 
         for (Subsystem subsystem : subsystems) {
             subsystem.init(hardwareMap);
@@ -59,9 +59,14 @@ public class Robot {
                 .addData("IMU Heading: ", getImu().getHeading());
         // Odometry
         telemetry.addLine()
-                .addData("X: ", getOdometry().getX())
-                .addData("Y: ", getOdometry().getY())
-                .addData("Theta: ", getOdometry().getTheta());
+                .addData("Odometry X: ", getOdometry().getX())
+                .addData("Odometry Y: ", getOdometry().getY())
+                .addData("Odometry Theta: ", getOdometry().getTheta());
+        // Vision
+        telemetry.addLine()
+                .addData("Vision X: ", getVision().getX())
+                .addData("Vision Y: ", getVision().getY())
+                .addData("Vision Theta: ", getVision().getTheta());
         // Collision Detection
         telemetry.addLine()
                 .addData("Collision Detected: ", getImu().getCollision());
@@ -74,10 +79,11 @@ public class Robot {
 
     public GameState getGameState() {
         if (elapsedTime.seconds() < GameState.TeleOp.getEndTime()) {
-            return GameState.TeleOp;
+            setGameState(GameState.TeleOp);
         } else {
-            return GameState.EndGame;
+            setGameState(GameState.EndGame);
         }
+        return gameState;
     }
 
     public void resetElapsedTime() {
@@ -96,7 +102,12 @@ public class Robot {
         this.gameState = gameState;
     }
 
-    public OdometryGPS getOdometry() {
+    public TwoWheelOdometryGPS getOdometry() {
         return odometry;
     }
+
+    public VuforiaVision getVision() {
+        return vision;
+    }
+
 }

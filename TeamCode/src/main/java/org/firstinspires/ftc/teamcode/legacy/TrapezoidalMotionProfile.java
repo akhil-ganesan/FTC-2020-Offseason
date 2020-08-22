@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.lib.util.MathFx;
 import java.util.ArrayList;
 
 @Deprecated
-public class TrapezoidalMotionProfile extends Profile {
+public class TrapezoidalMotionProfile {
     private double position, velocity, acceleration;
     private double maxVelocity, maxAcceleration;
     private Double[] positions, velocities, accelerations;
@@ -27,7 +27,7 @@ public class TrapezoidalMotionProfile extends Profile {
         generateProfile();
     }
 
-    @Override
+
     public void generateProfile() {
         while (Math.abs(error) < 0.05) {
             double output_acceleration;

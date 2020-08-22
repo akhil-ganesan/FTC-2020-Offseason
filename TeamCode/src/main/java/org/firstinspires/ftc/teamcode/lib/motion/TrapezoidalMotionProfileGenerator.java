@@ -8,6 +8,7 @@ public class TrapezoidalMotionProfileGenerator extends Profile {
 
     private double maxV, maxA;
     private double[] positions, velocities, accelerations;
+    private ProfileState[] states;
     private double error, direction, dt, Vt;
     private double tA, tC, tT;
     private int timeSteps;
@@ -40,20 +41,24 @@ public class TrapezoidalMotionProfileGenerator extends Profile {
                 accelerations[i] = (maxA * direction);
                 velocities[i] = (MathFx.scale(-maxV, maxV, maxA * timeStamp * direction));
                 positions[i] = (maxA * timeStamp * direction * timeStamp / 2);
+                states[i] = ProfileState.Accelerating;
             } else if (timeStamp < tA + tC) {
                 accelerations[i] = (0);
                 velocities[i] = (Vt);
                 positions[i] = ((Vt * tA) / 2 + (Vt * (timeStamp - tA)));
+                states[i] = ProfileState.Coasting;
             } else if (timeStamp < tT) {
                 accelerations[i] = (-maxA * direction);
                 velocities[i] = (MathFx.scale(-maxV, maxV, Vt - (maxA * direction *
                         (timeStamp - (tA + tC)))));
                 positions[i] = ((Vt * tA) / 2 + (Vt * tC) + ((Vt * tA) - (tT - timeStamp) *
                         (Vt - maxA * direction * (timeStamp - (tA + tC)))) / 2);
+                states[i] = ProfileState.Decelerating;
             } else {
                 accelerations[i] = (0);
                 velocities[i] = (0);
                 positions[i] = (error);
+                states[i] = ProfileState.Braking;
             }
         }
     }
@@ -102,6 +107,7 @@ public class TrapezoidalMotionProfileGenerator extends Profile {
         positions = new double[timeSteps];
         velocities = new double[timeSteps];
         accelerations = new double[timeSteps];
+        states = new ProfileState[timeSteps];
     }
 
     public double getTotalTime() {
@@ -145,4 +151,14 @@ public class TrapezoidalMotionProfileGenerator extends Profile {
         return error;
     }
 
+    @Override
+    public ProfileState getProfileState(double timeStamp) {
+        timeStamp = MathFx.scale(0, timeStamp, timeStamp);
+        int timeStep = (int)(timeStamp/dt);
+        if (timeStep < states.length) {
+            return states[timeStep];
+        }
+
+        return ProfileState.Braking;
+    }
 }

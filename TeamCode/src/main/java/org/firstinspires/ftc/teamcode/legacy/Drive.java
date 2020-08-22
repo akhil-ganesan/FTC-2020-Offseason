@@ -9,7 +9,6 @@ import org.firstinspires.ftc.teamcode.team18103.src.Constants;
 import org.firstinspires.ftc.teamcode.team18103.states.DriveMode;
 import org.firstinspires.ftc.teamcode.team18103.subsystems.IMU.IMU;
 import org.firstinspires.ftc.teamcode.team18103.subsystems.IMU.REV_IMU;
-import org.firstinspires.ftc.teamcode.team18103.subsystems.Odometry.OdometryGPS;
 import org.firstinspires.ftc.teamcode.team18103.subsystems.Vision.VuforiaVision;
 import org.firstinspires.ftc.teamcode.team18103.subsystems.Subsystem;
 
@@ -23,7 +22,7 @@ public class Drive extends Subsystem {
     private IMU imu;
     private REV_IMU imu2;
     private VuforiaVision vision;
-    private OdometryGPS odometry;
+    private OdometryGPSLinear odometry;
     private DriveMode driveMode = DriveMode.Balanced;
     private int driveType = 0; // 0 - Field-Centric, 1 - POV
 
@@ -38,7 +37,7 @@ public class Drive extends Subsystem {
         setVision(vision);
     }
 
-    public Drive(IMU imu, VuforiaVision vision, OdometryGPS odometry) {
+    public Drive(IMU imu, VuforiaVision vision, OdometryGPSLinear odometry) {
         setImu(imu);
         setVision(vision);
         setOdometry(odometry);
@@ -363,11 +362,11 @@ public class Drive extends Subsystem {
         return horizontal;
     }
 
-    public OdometryGPS getOdometry() {
+    public OdometryGPSLinear getOdometry() {
         return odometry;
     }
 
-    public void setOdometry(OdometryGPS odometry) {
+    public void setOdometry(OdometryGPSLinear odometry) {
         this.odometry = odometry;
     }
 }
