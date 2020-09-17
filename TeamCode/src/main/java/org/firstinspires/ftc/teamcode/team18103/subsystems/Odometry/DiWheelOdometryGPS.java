@@ -1,24 +1,24 @@
 package org.firstinspires.ftc.teamcode.team18103.subsystems.Odometry;
 
-import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.team18103.src.Constants;
 
-public class TwoWheelOdometryGPS extends Odometry {
+public class DiWheelOdometryGPS extends Odometry {
 
-    private DcMotor left, right;
+    private DcMotorEx frontLeft, frontRight, backLeft, backRight;
     private double ticksPerInch, dt;
 
     private double x = 0, y = 0, theta = 0;
     private double r_0 = 0, l_0 = 0;
 
-    public TwoWheelOdometryGPS(double ticksPerInch, int dt) {
+    public DiWheelOdometryGPS(double ticksPerInch, int dt) {
         this.ticksPerInch = ticksPerInch;
         this.dt = dt;
     }
 
-    public TwoWheelOdometryGPS(double ticksPerInch, int dt, double x0, double y0, double theta0) {
+    public DiWheelOdometryGPS(double ticksPerInch, int dt, double x0, double y0, double theta0) {
         this.ticksPerInch = ticksPerInch;
         this.dt = dt;
         x = x0;
@@ -28,17 +28,21 @@ public class TwoWheelOdometryGPS extends Odometry {
 
     @Override
     public void init(HardwareMap ahMap) {
-        left = ahMap.get(DcMotor.class, Constants.frontLeft);
-        right = ahMap.get(DcMotor.class, Constants.frontRight);
+        frontLeft = ahMap.get(DcMotorEx.class, Constants.frontLeft);
+        frontRight = ahMap.get(DcMotorEx.class, Constants.frontRight);
+        backLeft = ahMap.get(DcMotorEx.class, Constants.backLeft);
+        backRight = ahMap.get(DcMotorEx.class, Constants.backRight);
 
-        right.setDirection(DcMotor.Direction.REVERSE);
+        frontRight.setDirection(DcMotorEx.Direction.REVERSE);
+        backRight.setDirection(DcMotorEx.Direction.REVERSE);
+
     }
 
     @Override
     public void run() {
         //Get Current Positions
-        double lPos = (getLeft().getCurrentPosition() * getTicksPerInch());
-        double rPos = (getRight().getCurrentPosition() * getTicksPerInch());
+        double lPos = (getLeft() * getTicksPerInch());
+        double rPos = (getRight() * getTicksPerInch());
 
         double dl = lPos - getL_0();
         double dr = rPos - getR_0();
@@ -77,12 +81,12 @@ public class TwoWheelOdometryGPS extends Odometry {
         return theta;
     }
 
-    public DcMotor getLeft() {
-        return left;
+    public int getLeft() {
+        return (frontLeft.getCurrentPosition() + backLeft.getCurrentPosition())/2;
     }
 
-    public DcMotor getRight() {
-        return right;
+    public int getRight() {
+        return (frontRight.getCurrentPosition() + backRight.getCurrentPosition())/2;
     }
 
     public double getTicksPerInch() {

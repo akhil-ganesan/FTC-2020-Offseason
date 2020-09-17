@@ -4,5 +4,7 @@ public enum ProfileState {
     Accelerating,
     Coasting,
     Decelerating,
-    Braking;
+    Stopping,
+    Jolting,
+    Dejolting;
 }

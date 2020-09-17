@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.lib.drivers.Motor;
 import org.firstinspires.ftc.teamcode.team18103.states.GameState;
 import org.firstinspires.ftc.teamcode.team18103.subsystems.Drive;
 import org.firstinspires.ftc.teamcode.team18103.subsystems.IMU.REV_IMU;
-import org.firstinspires.ftc.teamcode.team18103.subsystems.Odometry.TwoWheelOdometryGPS;
+import org.firstinspires.ftc.teamcode.team18103.subsystems.Odometry.TriWheelOdometryGPS;
 import org.firstinspires.ftc.teamcode.team18103.subsystems.Vision.VuforiaVision;
 import org.firstinspires.ftc.teamcode.team18103.subsystems.Subsystem;
 
@@ -22,7 +22,7 @@ public class Robot {
 
     private REV_IMU imu = new REV_IMU();
     //private AHRS navX = new KLAHRS();
-    private TwoWheelOdometryGPS odometry = new TwoWheelOdometryGPS(Motor.GoBILDA_312.getTicksPerInch(), Constants.dt);
+    private TriWheelOdometryGPS odometry = new TriWheelOdometryGPS(Motor.GoBILDA_312.getTicksPerInch(), Constants.dt);
     private VuforiaVision vision = new VuforiaVision();
     private Drive DriveSubsystem = new Drive(imu, odometry, vision);
 
@@ -52,6 +52,7 @@ public class Robot {
         // Game State
         telemetry.addLine()
                 .addData("Game State: ", getGameState().getName());
+        /*
         // IMU Measurements
         telemetry.addLine()
                 .addData("IMU Roll: ", getImu().getRoll())
@@ -67,6 +68,13 @@ public class Robot {
                 .addData("Vision X: ", getVision().getX())
                 .addData("Vision Y: ", getVision().getY())
                 .addData("Vision Theta: ", getVision().getTheta());
+         */
+
+        // Data Fusion Model
+        telemetry.addLine()
+                .addData("Data Fusion X: ", getDriveSubsystem().getDataFusionX())
+                .addData("Data Fusion Y: ", getDriveSubsystem().getDataFusionY())
+                .addData("Data Fusion Theta: ", getDriveSubsystem().getDataFusionTheta());
         // Collision Detection
         telemetry.addLine()
                 .addData("Collision Detected: ", getImu().getCollision());
@@ -102,7 +110,7 @@ public class Robot {
         this.gameState = gameState;
     }
 
-    public TwoWheelOdometryGPS getOdometry() {
+    public TriWheelOdometryGPS getOdometry() {
         return odometry;
     }
 

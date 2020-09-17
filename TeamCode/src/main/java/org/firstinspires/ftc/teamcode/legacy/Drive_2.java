@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.team18103.subsystems;
+package org.firstinspires.ftc.teamcode.legacy;
 
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -9,31 +9,44 @@ import org.firstinspires.ftc.teamcode.lib.drivers.Motor;
 import org.firstinspires.ftc.teamcode.lib.motion.ProfileState;
 import org.firstinspires.ftc.teamcode.lib.motion.TrapezoidalMotionProfileGenerator;
 import org.firstinspires.ftc.teamcode.lib.util.MathFx;
-import org.firstinspires.ftc.teamcode.lib.util.MeanOptimizedDataFusionModel;
 import org.firstinspires.ftc.teamcode.team18103.src.Constants;
 import org.firstinspires.ftc.teamcode.team18103.states.DriveMode;
 import org.firstinspires.ftc.teamcode.team18103.subsystems.IMU.IMU;
-import org.firstinspires.ftc.teamcode.team18103.subsystems.Odometry.TriWheelOdometryGPS;
+import org.firstinspires.ftc.teamcode.team18103.subsystems.Odometry.DiWheelOdometryGPS;
+import org.firstinspires.ftc.teamcode.team18103.subsystems.Subsystem;
 import org.firstinspires.ftc.teamcode.team18103.subsystems.Vision.VuforiaVision;
 
 import java.util.Arrays;
 
-public class Drive extends Subsystem {
+@Deprecated
+public class Drive_2 extends Subsystem {
     private DcMotorEx frontLeft, frontRight, backLeft, backRight;
     private DcMotorEx[] driveMotors;
     private DriveMode driveMode = DriveMode.Balanced;
     private int driveType = 0; // 0 - Field-Centric, 1 - POV
     private IMU imu;
-    private TriWheelOdometryGPS odometry;
+    private DiWheelOdometryGPS odometry;
     private VuforiaVision vision;
-    private MeanOptimizedDataFusionModel model;
     private ProfileState driveState;
 
-    public Drive(IMU imu, TriWheelOdometryGPS odometry, VuforiaVision vision) {
+    public Drive_2(IMU imu) {
+        this.imu = imu;
+    }
+
+    public Drive_2(IMU imu, DiWheelOdometryGPS odometry) {
+        this.imu = imu;
+        this.odometry = odometry;
+    }
+
+    public Drive_2(IMU imu, VuforiaVision vision) {
+        this.imu = imu;
+        this.vision = vision;
+    }
+
+    public Drive_2(IMU imu, DiWheelOdometryGPS odometry, VuforiaVision vision) {
         this.imu = imu;
         this.odometry = odometry;
         this.vision = vision;
-        model = new MeanOptimizedDataFusionModel();
     }
 
     @Override
@@ -81,7 +94,7 @@ public class Drive extends Subsystem {
     }
 
     /**
-     * Sets Drive to rotate
+     * Sets Drive to Rotate
      * @param power Speed of Movement
      */
     private void setRotateMotors(double power) {
@@ -91,19 +104,79 @@ public class Drive extends Subsystem {
         backRight.setPower(-power);
     }
 
-    // Distanced Driving (Motion Profiling)
+    // Distanced Driving (Non-Motion Profiling)
 
     /**
-     * Sets Drive to rotate to a certain angle (-180, 180) w/ motion profile & PIDSVA
+     * Sets drive motors to move (forward/backwards) to a certain position
+     * @param power Speed of movement
+     * @param distance Distance to move (references to a target point)
+     */
+    public void encoderDrive(double power, int distance) {
+
+        for (DcMotorEx i : driveMotors) {
+            i.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        }
+        for (DcMotorEx i : driveMotors) {
+            i.setTargetPosition(distance);
+        }
+        for (DcMotorEx i : driveMotors) {
+            i.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        }
+        setDriveMotors(power);
+
+        while (frontRight.isBusy() && frontLeft.isBusy() && backRight.isBusy() && backLeft.isBusy());
+
+        setDriveMotors(0);
+    }
+
+    /**
+     * Sets drive motors to move (left/right) to a certain position
+     * @param power Speed of movement
+     * @param distance Distance to move (references to a target point)
+     */
+    public void encoderStrafe(double power, int distance) {
+
+        for (DcMotorEx i : driveMotors) {
+            i.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        }
+
+        frontLeft.setTargetPosition(distance);
+        backLeft.setTargetPosition(-distance);
+        frontRight.setTargetPosition(-distance);
+        backRight.setTargetPosition(distance);
+
+        for (DcMotorEx i : driveMotors) {
+            i.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        }
+        setStrafeMotors(power);
+
+        while (frontRight.isBusy() && frontLeft.isBusy() && backRight.isBusy() && backLeft.isBusy());
+
+        setDriveMotors(0);
+    }
+
+    /**
+     * Sets drive motors to rotate to a certain angle - (-180, 180) range
+     * @param power Speed of movement
      * @param heading rotation angle
      */
-    public void PointRotation(double heading) {
-        double curHead = getDataFusionTheta();
+    public void IMUPointRotateGyro(double power, double heading) {
+        if (heading < 0) {
+            while (imu.getHeading() < heading) {
+                setRotateMotors(-power);
+            }
+            setDriveMotors(0);
+        } else if (heading > 0) {
+            while (imu.getHeading() > heading) {
+                setRotateMotors(power);
+            }
+            setDriveMotors(0);
+        }
+    }
 
-        double error = heading - curHead;
+    // Distanced Driving (Motion Profiling)
 
-        double distance = Constants.ENCODER_DIFFERENCE * Math.PI * error / 360;
-
+    public void motionProfileDrive(double distance) {
         TrapezoidalMotionProfileGenerator motionProfile = new TrapezoidalMotionProfileGenerator(distance, Motor.GoBILDA_312);
         for (DcMotorEx i : driveMotors) {
             i.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
@@ -117,68 +190,12 @@ public class Drive extends Subsystem {
             double position = motionProfile.getPosition(timeStamp);
             double velocity = motionProfile.getVelocity(timeStamp);
             double acceleration = motionProfile.getAcceleration(timeStamp);
-            double pos_error = position - (frontLeft.getCurrentPosition()/ Motor.GoBILDA_312.getTicksPerInch());
-            double output = controller.getOutput(pos_error, velocity, acceleration);
-
-            setRotateMotors(output);
-
-            setDriveState(motionProfile.getProfileState(timeStamp));
-
-        }
-        setDriveMotors(0);
-    }
-
-    /**
-     * Sets Drive to go forward/backwards w/ motion profile & PIDSVA
-     * @param distance target setpoint
-     */
-    public void motionProfileDrive(double distance) {
-        TrapezoidalMotionProfileGenerator motionProfile = new TrapezoidalMotionProfileGenerator(distance, Motor.GoBILDA_312);
-        for (DcMotorEx i : driveMotors) {
-            i.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-            i.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
-        }
-
-        ElapsedTime timer = new ElapsedTime();
-        PIDSVA controller = new PIDSVA(0, 0, 0, 0d, 1d/motionProfile.getMaxV(), 0);
-        while (timer.seconds() < motionProfile.getTotalTime()) {
-            double timeStamp = timer.seconds();
-            double position = motionProfile.getPosition(timeStamp);
-            double velocity = motionProfile.getVelocity(timeStamp);
-            double acceleration = motionProfile.getAcceleration(timeStamp);
             double error = position - (frontLeft.getCurrentPosition()/ Motor.GoBILDA_312.getTicksPerInch());
             double output = controller.getOutput(error, velocity, acceleration);
 
-            setDriveMotors(output);
-
-            setDriveState(motionProfile.getProfileState(timeStamp));
-
-        }
-        setDriveMotors(0);
-    }
-
-    /**
-     * Sets Drive to go left/right w/ motion profile & PIDSVA
-     * @param distance target setpoint
-     */
-    public void motionProfileStrafe(double distance) {
-        TrapezoidalMotionProfileGenerator motionProfile = new TrapezoidalMotionProfileGenerator(distance, Motor.GoBILDA_312);
-        for (DcMotorEx i : driveMotors) {
-            i.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-            i.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
-        }
-
-        ElapsedTime timer = new ElapsedTime();
-        PIDSVA controller = new PIDSVA(0, 0, 0, 0d, 1d/motionProfile.getMaxV(), 0);
-        while (timer.seconds() < motionProfile.getTotalTime()) {
-            double timeStamp = timer.seconds();
-            double position = motionProfile.getPosition(timeStamp);
-            double velocity = motionProfile.getVelocity(timeStamp);
-            double acceleration = motionProfile.getAcceleration(timeStamp);
-            double error = position - (frontLeft.getCurrentPosition()/ Motor.GoBILDA_312.getTicksPerInch());
-            double output = controller.getOutput(error, velocity, acceleration);
-
-            setStrafeMotors(output);
+            for (DcMotorEx i : driveMotors) {
+                i.setPower(output);
+            }
 
             setDriveState(motionProfile.getProfileState(timeStamp));
 
@@ -232,6 +249,28 @@ public class Drive extends Subsystem {
     }
 
     /**
+     * Mecanum Drive Control (Via trigonometric proportions)
+     * @param y Forward/Backward Force (GamePad Left Stick y)
+     * @param x Rotational Force (GamePad Right Stick x)
+     * @param z Left/Right (Strafe) Force (GamePad Left Stick x)
+     */
+    public void trigMecDrive(double y, double x, double z) {
+        double r = Math.hypot(z, y);
+        double robotAngle = Math.atan2(y, z) - Math.PI/4;
+        double rightX = x*-1;
+
+        final double v1 = r * Math.cos(robotAngle) + rightX;
+        final double v2 = r * Math.sin(robotAngle) - rightX;
+        final double v3 = r * Math.sin(robotAngle) + rightX;
+        final double v4 = r * Math.cos(robotAngle) - rightX;
+
+        frontLeft.setPower(v1);
+        backLeft.setPower(v2);
+        backRight.setPower(v3);
+        frontRight.setPower(v4);
+    }
+
+    /**
      * Field-Centric Mecanum Drive Control
      * @param y Forward/Backward Force (GamePad Left Stick y)
      * @param x Left/Right (Strafe) Force (GamePad Left Stick x)
@@ -239,8 +278,8 @@ public class Drive extends Subsystem {
      * @param mode Drivetrain Speed Setting (Sport, Normal, Economy)
      */
     public void fieldCentricMecanumDrive(double y, double x, double turn, DriveMode mode) {
-        x = x * Math.cos(getDataFusionTheta()) - y * Math.sin(getDataFusionTheta());
-        y = x * Math.sin(getDataFusionTheta()) + y * Math.cos(getDataFusionTheta());
+        x = x * Math.cos(imu.getHeading()) - y * Math.sin(imu.getHeading());
+        y = x * Math.sin(imu.getHeading()) + y * Math.cos(imu.getHeading());
 
         POVMecanumDrive(y, x, turn, mode);
     }
@@ -254,11 +293,9 @@ public class Drive extends Subsystem {
      * @param right_trigger Higher Gear Adjustment
      * @param left_bumper Field-Centric Drive Setter
      * @param right_bumper Point-of-View Drive Setter
-     * @param button Zero Yaw Setter
      */
     public void ultimateDriveController(double y, double x, double turn, float left_trigger,
-                                        float right_trigger, boolean left_bumper,
-                                        boolean right_bumper, boolean button) {
+                                        float right_trigger, boolean left_bumper, boolean right_bumper) {
         double mode = driveMode.getId();
         double modeChange = right_trigger - left_trigger;
         if (Math.abs(modeChange) > 0.5) {
@@ -275,10 +312,6 @@ public class Drive extends Subsystem {
             setDriveType(1);
         }
 
-        if (button) {
-            zeroYaw();
-        }
-
         switch (driveType) {
             case 0:
                 fieldCentricMecanumDrive(y, x, turn, driveMode);
@@ -289,10 +322,6 @@ public class Drive extends Subsystem {
         }
 
 
-    }
-
-    public void zeroYaw() {
-        model.setBias(-getDataFusionTheta());
     }
 
     public DriveMode getDriveMode() {
@@ -321,27 +350,12 @@ public class Drive extends Subsystem {
         this.driveType = driveType;
     }
 
-    public TriWheelOdometryGPS getOdometry() {
+    public DiWheelOdometryGPS getOdometry() {
         return odometry;
     }
 
     public VuforiaVision getVision() {
         return vision;
-    }
-
-    public double getDataFusionTheta() {
-        return model.fuse(new double[]{imu.getHeading(), vision.getTheta(),
-                odometry.getTheta()}, new double[]{1, 2, 2});
-    }
-
-    public double getDataFusionX() {
-        return model.fuse(new double[]{vision.getX(),
-                odometry.getX()});
-    }
-
-    public double getDataFusionY() {
-        return model.fuse(new double[]{vision.getY(),
-                odometry.getY()});
     }
 
     public void setDriveState(ProfileState driveState) {
@@ -351,9 +365,4 @@ public class Drive extends Subsystem {
     public ProfileState getDriveState() {
         return driveState;
     }
-
-    public MeanOptimizedDataFusionModel getModel() {
-        return model;
-    }
-
 }

@@ -4,16 +4,27 @@ import org.firstinspires.ftc.teamcode.lib.drivers.Motor;
 import org.firstinspires.ftc.teamcode.lib.util.MathFx;
 import org.firstinspires.ftc.teamcode.team18103.src.Constants;
 
-public class TrapezoidalMotionProfileGenerator extends Profile {
+public class SCurveMotionProfileGenerator extends Profile {
 
     private double maxV, maxA;
     private double[] positions, velocities, accelerations;
-    private ProfileState[] states;
+    private SCurveProfileState[] states;
     private double error, direction, dt, Vt;
     private double tA, tC, tT;
     private int timeSteps;
 
-    public TrapezoidalMotionProfileGenerator(double set_position) {
+    public enum SCurveProfileState {
+        Phase_1,
+        Phase_2,
+        Phase_3,
+        Phase_4,
+        Phase_5,
+        Phase_6,
+        Phase_7,
+        Done;
+    }
+
+    public SCurveMotionProfileGenerator(double set_position) {
         setLimits(Motor.GoBILDA_312.maxAngularVelocity(), 300d);
         setError(set_position);
         setDirection();
@@ -23,7 +34,7 @@ public class TrapezoidalMotionProfileGenerator extends Profile {
         generateProfile();
     }
 
-    public TrapezoidalMotionProfileGenerator(double set_position, Motor motor) {
+    public SCurveMotionProfileGenerator(double set_position, Motor motor) {
         setLimits(motor.maxAngularVelocity(), 300d);
         setError(set_position);
         setDirection();
@@ -41,24 +52,24 @@ public class TrapezoidalMotionProfileGenerator extends Profile {
                 accelerations[i] = (maxA * direction);
                 velocities[i] = (MathFx.scale(-maxV, maxV, maxA * timeStamp * direction));
                 positions[i] = (maxA * timeStamp * direction * timeStamp / 2);
-                states[i] = ProfileState.Accelerating;
+                states[i] = null;
             } else if (timeStamp < tA + tC) {
                 accelerations[i] = (0);
                 velocities[i] = (Vt);
                 positions[i] = ((Vt * tA) / 2 + (Vt * (timeStamp - tA)));
-                states[i] = ProfileState.Coasting;
+                states[i] = null;
             } else if (timeStamp < tT) {
                 accelerations[i] = (-maxA * direction);
                 velocities[i] = (MathFx.scale(-maxV, maxV, Vt - (maxA * direction *
                         (timeStamp - (tA + tC)))));
                 positions[i] = ((Vt * tA) / 2 + (Vt * tC) + ((Vt * tA) - (tT - timeStamp) *
                         (Vt - maxA * direction * (timeStamp - (tA + tC)))) / 2);
-                states[i] = ProfileState.Decelerating;
+                states[i] = null;
             } else {
                 accelerations[i] = (0);
                 velocities[i] = (0);
                 positions[i] = (error);
-                states[i] = ProfileState.Stopping;
+                states[i] = null;
             }
         }
     }
@@ -107,7 +118,7 @@ public class TrapezoidalMotionProfileGenerator extends Profile {
         positions = new double[timeSteps];
         velocities = new double[timeSteps];
         accelerations = new double[timeSteps];
-        states = new ProfileState[timeSteps];
+        states = new SCurveProfileState[timeSteps];
     }
 
     public double getTotalTime() {
@@ -151,13 +162,13 @@ public class TrapezoidalMotionProfileGenerator extends Profile {
         return error;
     }
 
-    public ProfileState getProfileState(double timeStamp) {
+    public SCurveProfileState getProfileState(double timeStamp) {
         timeStamp = MathFx.scale(0, timeStamp, timeStamp);
         int timeStep = (int)(timeStamp/dt);
         if (timeStep < states.length) {
             return states[timeStep];
         }
 
-        return ProfileState.Stopping;
+        return SCurveProfileState.Done;
     }
 }

@@ -15,16 +15,16 @@ public class OdometryCalibration extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         robot.init();
-        robot.getDriveSubsystem().IMUPointRotateGyro(0.3, 90);
+        robot.getDriveSubsystem().PointRotation(90);
         robot.Telemetry();
         telemetry.addLine()
                 .addData("Wheel Base Separation", (2*90*
                         Math.abs(robot.getDriveSubsystem().getOdometry().getLeft().getCurrentPosition())
                         + (Math.abs(robot.getDriveSubsystem().getOdometry().getRight().getCurrentPosition()))/
-                        robot.getImu().getHeading())/(Math.PI* Motor.GoBILDA_312.getTicksPerInch()));
+                        robot.getDriveSubsystem().getDataFusionTheta())/(Math.PI* Motor.GoBILDA_312.getTicksPerInch()));
         telemetry.addLine()
                 .addData("Horizontal Encoder Offset", robot.getDriveSubsystem().getOdometry()
-                        .getHorizontal().getCurrentPosition()/Math.toRadians(robot.getImu().getHeading()));
+                        .getHorizontal().getCurrentPosition()/Math.toRadians(robot.getDriveSubsystem().getDataFusionTheta()));
 
     }
 }
